@@ -1,0 +1,50 @@
+{
+  "name": "what-i-am-supposed-to-did-it",
+  "version": "1.0.0",
+  "description": "MVP to Production Fault-Tolerant Markdown Parsing & KPI Intelligence Infrastructure",
+  "main": "dist/core/parser/mdStaticParser.js",
+  "types": "dist/core/parser/mdStaticParser.d.ts",
+  "scripts": {
+    "init:env": "echo \"OPENAI_API_KEY=sk-your-key-here\" > .env",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "jest --coverage",
+    "test:synthetic": "jest tests/syntheticBulk.test.ts",
+    "automation:generate": "ts-node src/automation/datasetGenerator.ts",
+    "prod:start": "node dist/core/parser/mdStaticParser.js"
+  },
+  "keywords": [
+    "markdown-parser",
+    "structured-outputs",
+    "circuit-breaker",
+    "feature-flag",
+    "blue-green-deployment"
+  ],
+  "author": "Lead Architect",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.30",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.ts"
+    ],
+    "verbose": true,
+    "forceExit": true,
+    "clearMocks": true,
+    "resetMocks": true
+  }
+}

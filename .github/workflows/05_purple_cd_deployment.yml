@@ -1,0 +1,27 @@
+name: 🟣 Purple CD Deployment
+
+on:
+  push:
+    branches: [main] # 오직 메인 브랜치에 코드가 병합될 때만 운영 배포 트리거
+
+jobs:
+  deploy-infrastructure:
+    name: Continuous Deployment to Supabase Edge
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      # Supabase 원격 배포를 위한 공식 CLI 도구 세팅
+      - name: Setup Supabase CLI Agent
+        uses: supabase/setup-cli@v1
+        with:
+          version: "latest"
+
+      # 원격 클라우드 에지 환경으로 파싱 및 KPI 판정 코드 완전 무인 배포 단행
+      - name: Deploy Edge Functions Gateway
+        run: supabase functions deploy repo-webhook-receiver --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

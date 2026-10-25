@@ -1,0 +1,50 @@
+name: 🟠 Orange CI Automation Guardrail
+
+# 워크플로우 트리거 조건 정의
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    name: Run Core Quality Infrastructure Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 원격 깃 레포지토리의 소스 코드를 가상 환경으로 가져오기
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      # 2. Node.js 런타임 환경 구성
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-node: "20"
+          cache: "npm" # node_modules 캐싱 레이어 활성화로 빌드 타임 단축
+
+      # 3. 프로젝트 의존성 모듈 설치 (잠금 파일 기준 무결성 설치)
+      - name: Install Production Dependencies
+        run: npm ci
+
+      # 4. TypeScript 컴파일 무결성 검증 (빌드 에러 체크)
+      - name: Compile TypeScript Verification
+        run: npm run build
+
+      # 5. Core 로직에 대한 테스트 스위트 구동
+      - name: Execute Automated Regression Tests
+        run: npm test
+        env:
+          # 가상 프롬프트 실행 및 내부 연동용 더미 변수 주입 가드레일
+          NODE_ENV: test
+          OPENAI_API_KEY: ${{ secrets.CI_MOCK_OPENAI_KEY }}
+
+      # 6. 빌드 결과 스냅샷 및 아티팩트 보존 기록 (선택 사항)
+      - name: Archive Production Build Output
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-dist
+          path: dist/
+          retention-days: 7

@@ -1,0 +1,67 @@
+export interface PersonaMeta {
+  id: string;
+  name: string;
+  linguisticStyle: string;     // 언어적 특징 (영문 목표 스타일, 한글 답변 뉘앙스)
+  psychologicalTrait: string;  // 심리적 상태 (완벽주의, 작심삼일, 의욕상실 등)
+  targetFrequency: string;     // 목표를 설정하는 주기 및 패턴
+  actionTriggerRate: number;   // 실제 실전 행동(Did)으로 옮길 확률 (0.0 ~ 1.0)
+}
+
+/**
+ * 프로젝트 핵심 4대 페르소나 및 가상 풀 메타데이터 레포지토리
+ */
+export const PERSONA_REGISTRY: Record<string, PersonaMeta> = {
+  easy_peasy: {
+    id: 'easy_peasy',
+    name: '이지비지 (EasyPeasy)',
+    linguisticStyle: '거창한 영어 챌린지 타이틀을 좋아하지만 한국어 답변은 늘 자신감 없고 구구절절함.',
+    psychologicalTrait: '극단적 완벽주의 성향. 완벽하게 준비되지 않으면 시작 자체에 큰 인지적 부하를 느낌.',
+    targetFrequency: '매주 월요일 새벽',
+    actionTriggerRate: 0.4
+  },
+  new_year_hero: {
+    id: 'new_year_hero',
+    name: '뉴이어 (NewYear)',
+    linguisticStyle: '선언적이고 당찬 어조의 영문 목표 설정. 하지만 마크다운 체크리스트는 대부분 비어있음.',
+    psychologicalTrait: '형식적인 계획 수립과 도구 세팅에 에너지를 몰아서 쓰고 정작 실행 시점엔 의욕 상실.',
+    targetFrequency: '새해 첫날 혹은 매월 1일',
+    actionTriggerRate: 0.2
+  },
+  sara_active: {
+    id: 'sara_active',
+    name: '사라 (Sara)',
+    linguisticStyle: '이모지를 난사하며 즉각적인 실행을 인증하는 스타일. 문장 끝에 늘 느낌표(!)가 붙음.',
+    psychologicalTrait: '인지적 부하를 최소화하여 생각하기 전에 몸을 먼저 움직이는 건강한 실행 중심형.',
+    targetFrequency: '매일 아침 7시',
+    actionTriggerRate: 0.9
+  },
+  rina_melancholy: {
+    id: 'rina_melancholy',
+    name: '리나 (Rina)',
+    linguisticStyle: '굉장히 방어적이고 냉소적인 말투. 목표 자체를 극도로 쪼개거나 거의 잡지 않으려고 함.',
+    psychologicalTrait: '실패에 대한 두려움으로 인해 목표의 허들을 지나치게 낮추거나 시스템 인터랙션을 기피함.',
+    targetFrequency: '간헐적 주말',
+    actionTriggerRate: 0.6
+  }
+};
+
+/**
+ * 프롬프트 에이전트 생성기
+ * 특정 페르소나 메타데이터를 기반으로 GPT가 가상 마크다운을 생성할 수 있도록 특화 프롬프트 컨텍스트를 제조합니다.
+ */
+export function generatePersonaPromptContext(personaId: string): string {
+  const persona = PERSONA_REGISTRY[personaId];
+  if (!persona) {
+    throw new Error(`존재하지 않는 페르소나 ID: ${personaId}`);
+  }
+
+  return `
+[PERSONA PROFILE AGENT CONTEXT]
+- NAME: ${persona.name}
+- PSYCHOLOGICAL TRAIT: ${persona.psychologicalTrait}
+- LINGUISTIC STYLE & NUANCE: ${persona.linguisticStyle}
+- ACTION PROBABILITY: ${persona.actionTriggerRate * 100}%
+
+위 페르소나의 인격과 상태에 완전히 빙의하세요. 이 유저가 작성했을 법한 지극히 자연스럽고 왜곡된 형태의 비정형 마크다운 원문 데이터를 생성하는 기조로 동작해야 합니다.
+`;
+}
