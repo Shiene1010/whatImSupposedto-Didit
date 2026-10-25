@@ -1,5 +1,5 @@
-import { ParsedMarkdown } from '../parser/mdStaticParser';
-import { UserSpeech } from '../splitter/scriptSplitter';
+import { ParsedMarkdown } from '../core/parser/mdStaticParser';
+import { UserSpeech } from '../core/splitter/scriptSplitter';
 
 export interface KpiMatchReport {
   userNickname: string;
@@ -37,19 +37,32 @@ export function evaluatePurpleKpi(
 
   // 1. 목표 마크다운의 인용구(Quotes)와 할 일 항목(Todo)에서 핵심 매칭 키워드 풀(Pool) 추출
   const targetKeywords: string[] = [];
+  const targetPhrases: string[] = [];
   
-  parsedTargetMd.quotes.forEach(quote => {
-    // 문장에서 조사나 공백을 제외한 2글자 이상의 핵심 명사/동사 의도 토큰 분리 가이드라인
-    const words = quote.split(/\s+/).filter(w => w.length >= 2);
-    targetKeywords.push(...words);
+  parsedTargetMd.quotes.forEach((quote: string) => {
+    const normalizedQuote = quote.trim();
+    if (!normalizedQuote) return;
+
+    targetPhrases.push(normalizedQuote.toLowerCase());
+
+    // 문장 전체를 우선 키워드로 보유하여 의미 단위 매칭을 유지
+    targetKeywords.push(normalizedQuote.toLowerCase());
+
+    const words = normalizedQuote.split(/\s+/).filter((w: string) => w.length >= 2);
+    targetKeywords.push(...words.map((word) => word.toLowerCase()));
   });
 
-  parsedTargetMd.todoItems.forEach(todo => {
-    if (todo.text) targetKeywords.push(todo.text.trim());
+  parsedTargetMd.todoItems.forEach((todo: { text: string }) => {
+    if (todo.text) {
+      const normalizedTodo = todo.text.trim().toLowerCase();
+      targetPhrases.push(normalizedTodo);
+      targetKeywords.push(normalizedTodo);
+    }
   });
 
   // 중복 키워드 제거 및 소문자 정규화
   const uniqueKeywords = Array.from(new Set(targetKeywords.map(k => k.toLowerCase())));
+  const uniquePhrases = Array.from(new Set(targetPhrases.map(p => p.toLowerCase())));
 
   // 2. 실전 발화 스트림 순회하며 매칭 대조 (Substring Match)
   userSpeeches.forEach(speech => {
@@ -57,12 +70,24 @@ export function evaluatePurpleKpi(
     let isLineMatched = false;
     let matchReason = '';
 
-    // 검증 규칙 A: 유저가 목표에서 언급한 핵심 키워드가 실제 발화에 포함되어 있는가?
-    for (const keyword of uniqueKeywords) {
-      if (speechContentLower.includes(keyword)) {
+    // 검증 규칙 A: 목표 문장/할일의 전체 의미가 실전 발화에 부분적으로라도 반영되었는지 우선 평가
+    for (const phrase of uniquePhrases) {
+      const phraseWords = phrase.split(/\s+/).filter((word: string) => word.length >= 2);
+      const phraseMatched = speechContentLower.includes(phrase) || phraseWords.some((word) => speechContentLower.includes(word));
+      if (phraseMatched) {
         isLineMatched = true;
-        matchReason = `목표 키워드 [${keyword}] 일치 확인`;
+        matchReason = `목표 키워드 [${phrase}] 일치 확인`;
         break;
+      }
+    }
+
+    if (!isLineMatched) {
+      for (const keyword of uniqueKeywords) {
+        if (speechContentLower.includes(keyword)) {
+          isLineMatched = true;
+          matchReason = `목표 키워드 [${keyword}] 일치 확인`;
+          break;
+        }
       }
     }
 

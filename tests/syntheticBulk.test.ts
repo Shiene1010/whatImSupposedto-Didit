@@ -38,7 +38,7 @@ describe('Sprint 4.2: 대량 합성 데이터셋 전수 런타임 신뢰성 검�
         const scriptRaw = fs.readFileSync(scriptPath, 'utf-8');
 
         // 2. Sprint 1.1 정적 파서 엔진 주입 및 크래시 가드 작동 검증
-        let parsedMd;
+        let parsedMd: ReturnType<typeof parseMarkdown> | undefined;
         expect(() => {
           parsedMd = parseMarkdown(targetRaw);
         }).not.toThrow();
@@ -47,7 +47,7 @@ describe('Sprint 4.2: 대량 합성 데이터셋 전수 런타임 신뢰성 검�
         expect(parsedMd?.frontMatter.persona).toBe(personaId);
 
         // 3. Sprint 1.2 스플리터 엔진 구동 검증
-        let userSpeeches;
+        let userSpeeches: ReturnType<typeof splitScriptByUser> | undefined;
         expect(() => {
           // 페르소나 메타에 지정된 이름을 기준으로 발화 추출 시도
           const personaName = PERSONA_REGISTRY[personaId].name.split(' ')[0]; // 닉네임 부분만 파싱
@@ -57,10 +57,12 @@ describe('Sprint 4.2: 대량 합성 데이터셋 전수 런타임 신뢰성 검�
         expect(Array.isArray(userSpeeches)).toBe(true);
 
         // 4. Sprint 2.2 🟣 Purple KPI 엔진 결합 전수 데이터 안정성 테스트
-        if (parsedMd && userSpeeches) {
-          let kpiReport;
+        if (parsedMd !== undefined && userSpeeches !== undefined) {
+          const safeParsedMd = parsedMd;
+          const safeUserSpeeches = userSpeeches;
+          let kpiReport: ReturnType<typeof evaluatePurpleKpi> | undefined;
           expect(() => {
-            kpiReport = evaluatePurpleKpi(personaId, parsedMd, userSpeeches);
+            kpiReport = evaluatePurpleKpi(personaId, safeParsedMd, safeUserSpeeches);
           }).not.toThrow();
 
           expect(kpiReport).toHaveProperty('isAchieved');

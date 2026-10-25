@@ -1,6 +1,6 @@
 import { parseMarkdown } from '../src/core/parser/mdStaticParser';
 import { splitScriptByUser } from '../src/core/splitter/scriptSplitter';
-import { evaluatePurpleKpi } from '../src/src/metrics/purpleKpiEngine';
+import { evaluatePurpleKpi } from '../src/metrics/purpleKpiEngine';
 
 describe('Sprint 2.2 🟣 Purple KPI 판정 엔진 통합 및 스냅샷 검증', () => {
   
