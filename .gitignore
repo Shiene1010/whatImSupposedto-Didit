@@ -30,6 +30,8 @@ Thumbs.db
 assets/stage_03_generated/
 assets/stage_05_repository_pool/
 database/migrations/database/
+supabase/.temp/
+supabase/migrations/
 
 # Temporary files
 /tmp/
