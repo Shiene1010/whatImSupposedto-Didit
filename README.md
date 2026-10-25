@@ -1,8 +1,28 @@
 
 📂 What I'm Supposed to, Did It (왙엠아이서포스투딛잍)
 
-MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피처 플래그 통제, 8초 트랜잭션 롤백까지 무중단 운영 가드레일을 장착한 마크다운 기반 KPI 인텔리전스 인프라
+MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피처 플래그 통제, 8초 트랜잭션 롤백까지 무중단 운영 가드레일을 장착한 마크다운 기반 KPI 인텔리전스 인프라입니다.
 본 레포지토리는 사용자의 비정형 마크다운(.md) 목표와 실전 대화록 스트림을 대조 분석하여, 완벽주의 성향의 유저들에게 최적의 4단 처방전(원문-5세-치트키-소리)을 제공하고 성취도를 실시간으로 추적하는 엔터프라이즈급 프로덕션 시스템입니다.
+
+## ✅ 현재 상태
+- 핵심 파서 및 KPI 엔진 검증 완료
+- 테스트 스위트 통과: 3개 테스트 스위트, 4개 테스트 통과
+- 문서 체계 정리 완료: 아키텍처, 파서, AI 처방, KPI, 운영 가드레일 문서 포함
+- GitHub 공개 저장소 반영 완료
+
+## 📚 문서 인덱스
+- [docs/01_ARCHITECTURE_OVERVIEW.md](docs/01_ARCHITECTURE_OVERVIEW.md): 전체 시스템 구조와 8단계 진화 모델
+- [docs/02_CORE_PARSER_SPECIFICATION.md](docs/02_CORE_PARSER_SPECIFICATION.md): 마크다운 파서와 대화 스크립트 분리 명세
+- [docs/03_AI_PRESCRIPTION_SCHEMA.md](docs/03_AI_PRESCRIPTION_SCHEMA.md): AI 처방 스키마 및 4단 처방 전략
+- [docs/04_PERSONA_METADATA_REGISTRY.md](docs/04_PERSONA_METADATA_REGISTRY.md): 페르소나 메타데이터 레지스트리
+- [docs/05_PURPLE_KPI_VALUATION_ENGINE.md](docs/05_PURPLE_KPI_VALUATION_ENGINE.md): 성취 판정 로직과 KPI 설계
+- [docs/06_SYNTHETIC_DATA_FACTORY_GUIDE.md](docs/06_SYNTHETIC_DATA_FACTORY_GUIDE.md): 합성 데이터 생성 가이드
+- [docs/07_ORANGE_CI_INTEGRATION_TEST.md](docs/07_ORANGE_CI_INTEGRATION_TEST.md): CI 자동화 및 품질 검증
+- [docs/08_PURPLE_CD_SUPABASE_DEPLOYMENT.md](docs/08_PURPLE_CD_SUPABASE_DEPLOYMENT.md): 배포 및 운영 풀 설계
+- [docs/09_DATABASE_MIGRATION_AND_RLS.md](docs/09_DATABASE_MIGRATION_AND_RLS.md): DB 스키마와 RLS 정책
+- [docs/10_GREEN_CIRCUIT_BREAKER_SHELTER.md](docs/10_GREEN_CIRCUIT_BREAKER_SHELTER.md): 회로 차단기 설계
+- [docs/11_YELLOW_FEATURE_FLAG_HOTFIX.md](docs/11_YELLOW_FEATURE_FLAG_HOTFIX.md): 피처 플래그 운영 기준
+- [docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md](docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md): 롤백/거버넌스 안전장치
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 
