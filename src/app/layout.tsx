@@ -1,9 +1,10 @@
 // src/app/layout.tsx
 import { ReactNode } from 'react';
+import './globals.css';
 
 export const metadata = {
-  title: 'whatImSupposedto-Didit',
-  description: '완벽주의 타격을 위한 철벽 가드레일 웹서비스',
+  title: '작게, 해냄 — 오늘 한 번의 실행',
+  description: '완벽한 계획보다 작은 시도에 집중하고, 오늘 해낸 순간을 발견해요.',
 };
 
 interface RootLayoutProps {
@@ -13,9 +14,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ko">
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#fafafa' }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

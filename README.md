@@ -6,7 +6,8 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 
 ## ✅ 현재 상태
 - 핵심 파서 및 KPI 엔진 검증 완료
-- 테스트 스위트 통과: 3개 테스트 스위트, 4개 테스트 통과
+- 테스트 스위트 통과: 5개 테스트 스위트, 9개 테스트 통과
+- 로그인 없이 체험하는 데모 UI: 목표·행동 기록 분석, 4단 규칙 기반 데모 처방
 - Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
 - GitHub webhook 서명 검증 및 비공개 전달 메타데이터 저장 구현
 - 문서 체계 정리 완료: 아키텍처, 파서, AI 처방, KPI, 운영 가드레일 및 DB 상태 문서 포함
@@ -28,6 +29,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - [docs/13_GOOGLE_OAUTH_SIGNIN.md](docs/13_GOOGLE_OAUTH_SIGNIN.md): Google OAuth 로그인 설정
 - [docs/14_SUPABASE_PROJECT_STATUS.md](docs/14_SUPABASE_PROJECT_STATUS.md): 원격 Supabase 스키마, 권한, 마이그레이션 점검 결과
 - [docs/15_WEBHOOK_AND_RPC_SAFETY.md](docs/15_WEBHOOK_AND_RPC_SAFETY.md): GitHub webhook 서명·중복 전달·오류 처리 및 RPC timeout 한계
+- [docs/16_DEMO_WEB_UI.md](docs/16_DEMO_WEB_UI.md): 데모 웹 UI 사용 방법, 로컬 분석 및 개인정보 처리 방식
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 
@@ -96,7 +98,14 @@ Use code with caution.
 
 환경 세팅 (Prerequisites)
 
-프로젝트 루트에 .env 파일을 생성하고 OpenAI 및 Supabase API 키를 주입합니다:
+데모 웹 UI는 외부 API 키나 로그인을 요구하지 않습니다. 로컬에서 바로 실행하려면:
+
+```bash
+npm ci
+npm run dev
+```
+
+별도로 Supabase 연동 기능을 개발할 때만 프로젝트 루트에 `.env`를 만들고 필요한 환경변수를 설정합니다:
 bash
 cp .env.template .env
 # 생성된 .env 파일 내부의 API_KEY 및 URL 변수값에 실전 인프라 토큰을 입력하세요.
