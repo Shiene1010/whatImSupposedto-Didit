@@ -47,6 +47,7 @@ MVP는 아래의 게스트 사용자 여정을 먼저 완성한다.
 ### 2.1 테스트 계정·구독 경계
 
 - 로그인 후 `POST /api/test-account/bootstrap`은 Supabase 토큰을 서버에서 검증하고, `DEMO_TEST_ACCOUNT_EMAIL`과 일치하며 Google에서 인증된 이메일인 경우에만 3일 이용권을 멱등적으로 발급합니다. 일반 계정은 테스트 기능을 사용할 수 없습니다.
+- `/account`는 로그인 계정·이용권·구독 상태, 로그아웃, 테스트 계정 탈퇴를 한곳에서 관리하는 설정 화면입니다. 테스트 계정이 아니면 구독/탈퇴 동작은 노출되지 않습니다.
 - `POST /api/test-account/subscription`은 실제 결제 없이 30일 모의 구독 이벤트를 기록합니다. 취소 endpoint는 즉시 `cancelled`로 전환합니다. 모든 모의 결제 기록은 0원이며 외부 결제사 호출은 없습니다.
 - 테스트 계정 탈퇴 endpoint는 같은 서버 검증을 거친 뒤 사용자 자신의 테스트 기록과 `ai_prescriptions`를 삭제하고 Supabase Auth 사용자를 삭제합니다. 재가입은 새 사용자 UUID로 처리되어 허용목록 이메일이면 3일 이용권을 새로 받습니다.
 - `database/migrations/`의 시연 계정 관련 SQL은 타임스탬프 순서로 적용합니다. 마지막 `20261027021500_demo_account_lifecycle_simulation.sql`은 테스트 이용권/모의 결제 이벤트, service-role 전용 상태 전환 RPC와 제한된 시연 데이터 초기화를 추가하며 이전 시연 구독 테이블을 참조합니다.

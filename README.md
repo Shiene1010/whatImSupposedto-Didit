@@ -46,7 +46,7 @@ flowchart TD
 - 핵심 파서 및 KPI 엔진 검증 완료
 - 자동 테스트: 7개 테스트 suite, 22개 테스트 통과 (파서, 발화 분리, KPI, 게스트 분석, 데모 프로필/테스트 계정, RPC timeout 회귀)
 - 로그인 없이 체험하는 데모 UI: 목표·행동 기록 분석, 4단 규칙 기반 데모 처방
-- 허용된 Google 테스트 계정에 가입 후 3일 이용권 자동 지급, 결제 없는 구독 시작·취소 모의, 로그아웃·계정 탈퇴 시험
+- 허용된 Google 테스트 계정에 가입 후 3일 이용권 자동 지급, `/account` 설정 화면에서 0원 구독 시작·취소 모의, 로그아웃·계정 탈퇴 시험
 - 별도 배포: [서비스 시연 소개](https://what-im-supposed-to-did-it-presenta.vercel.app/) · [MVP 직접 체험](https://what-im-supposed-to-did-it.vercel.app/)
 - Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
 - GitHub webhook 서명 검증 및 비공개 전달 메타데이터 저장 구현
