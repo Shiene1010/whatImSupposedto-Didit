@@ -7,7 +7,8 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 ## ✅ 현재 상태
 - 핵심 파서 및 KPI 엔진 검증 완료
 - 테스트 스위트 통과: 3개 테스트 스위트, 4개 테스트 통과
-- 문서 체계 정리 완료: 아키텍처, 파서, AI 처방, KPI, 운영 가드레일 문서 포함
+- Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
+- 문서 체계 정리 완료: 아키텍처, 파서, AI 처방, KPI, 운영 가드레일 및 DB 상태 문서 포함
 - GitHub 공개 저장소 반영 완료
 
 ## 📚 문서 인덱스
@@ -23,6 +24,8 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - [docs/10_GREEN_CIRCUIT_BREAKER_SHELTER.md](docs/10_GREEN_CIRCUIT_BREAKER_SHELTER.md): 회로 차단기 설계
 - [docs/11_YELLOW_FEATURE_FLAG_HOTFIX.md](docs/11_YELLOW_FEATURE_FLAG_HOTFIX.md): 피처 플래그 운영 기준
 - [docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md](docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md): 롤백/거버넌스 안전장치
+- [docs/13_GOOGLE_OAUTH_SIGNIN.md](docs/13_GOOGLE_OAUTH_SIGNIN.md): Google OAuth 로그인 설정
+- [docs/14_SUPABASE_PROJECT_STATUS.md](docs/14_SUPABASE_PROJECT_STATUS.md): 원격 Supabase 스키마, 권한, 마이그레이션 점검 결과
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 
@@ -40,7 +43,7 @@ whatImSupposedto-Didit/
 │   ├── 05_rls_theft_policy.sql      # 동료 표현 합법적 스틸(Steal)을 위한 Row Level Security 정책
 │   ├── 08_rollback_rpc.sql          # 충돌 시 데이터 원상 복구를 위한 PostgreSQL RPC 함수
 │   └── system_tables_setup.sql      # 피처 플래그 및 블루/그린 라우팅 설정 테이블
-├── docs/                            # [최종 완결] 12종 마스터 시스템 엔지니어링 문서 저장소
+├── docs/                            # 시스템 설계, 운영 및 프로젝트 상태 문서
 │   ├── 01_ARCHITECTURE_OVERVIEW.md
 │   ├── 02_CORE_PARSER_SPECIFICATION.md
 │   ├── 03_AI_PRESCRIPTION_SCHEMA.md
@@ -73,13 +76,14 @@ Use code with caution.
 7. Phase 7 (Yellow Feature Flag): 실운영 에러 발생 시 데이터베이스 Config 토글 관리 장치를 통해 코드 재배포 없이 특정 컴포넌트를 무다운타임 긴급 진화.
 8. Phase 8 (Blue Safe Governance): 8초 데드라인 타이머 기반 자동 복구 트랜잭션 및 다운타임 제로 프롬프트 블루/그린 원격 배포 거버넌스 완결.
 
-📚 3. 12종 마스터 엔지니어링 문서 명세 (Documentation Hub)
+📚 3. 엔지니어링 문서 명세 (Documentation Hub)
 
-본 프로젝트의 지속 가능한 운영 및 온보딩을 위해 docs/ 디렉토리에 백과사전식 기술 문서 12종이 100% 작성 완료되었습니다.
+프로젝트 운영 및 온보딩 문서는 docs/ 디렉토리에서 확인할 수 있습니다.
 • 아키텍처 및 코어 설계: 통합 시스템 흐름(01), 코어 마크다운 파서 및 스플리터 스펙(02), GPT-4o 구조화된 출력 스키마(03)
 • 지표 및 자산 양산: 4대 페르소나 레지스트리(04), 🟣 퍼플 KPI 알고리즘 명세(05), 합성 데이터 팩토리 구동 가이드(06)
 • 인프라 및 자동화: 🟠 오렌지 CI 전수 검사 규칙(07), 🟣 퍼플 CD Supabase 배포 규격(08), DB 스키마 및 RLS 합법 스틸 보안 정책(09)
 • 운영 장애 수호 백서: 🟢 서킷 브레이커 및 로컬 대피소(10), 🟡 피처 플래그 긴급 핫픽스 런북(11), 🔵 8초 롤백 및 블루/그린 라우팅(12)
+• 인증 및 DB 운영: Google OAuth 설정(13), 실제 Supabase 원격 스키마·권한 점검 결과(14)
 
 🚀 4. 빠른 시작 및 실행 프로토콜 (Quick Start)
 
