@@ -4,6 +4,44 @@
 MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피처 플래그 통제, 8초 트랜잭션 롤백까지 무중단 운영 가드레일을 장착한 마크다운 기반 KPI 인텔리전스 인프라입니다.
 본 레포지토리는 사용자의 비정형 마크다운(.md) 목표와 실전 대화록 스트림을 대조 분석하여, 완벽주의 성향의 유저들에게 최적의 4단 처방전(원문-5세-치트키-소리)을 제공하고 성취도를 실시간으로 추적하는 엔터프라이즈급 프로덕션 시스템입니다.
 
+## 데이터 파이프라인 및 안전 아키텍처
+
+![데이터 파이프라인 및 안전 아키텍처 인포그래픽](assets/data-pipeline-security-architecture.png)
+
+인포그래픽은 프로젝트의 전체 아키텍처 개요입니다. 현재 MVP의 실제 데이터 흐름은 아래 Mermaid 다이어그램을 기준으로 확인하세요. 게스트 분석은 브라우저에서 규칙 기반으로 실행되며, 입력 텍스트를 서버나 AI API로 전송하거나 DB에 저장하지 않습니다. 로그인·테스트 구독 데이터만 별도의 인증된 서버 경로에서 처리합니다.
+
+```mermaid
+flowchart TD
+    subgraph guest["게스트 분석 — 브라우저 내 처리"]
+        input["목표 Markdown · 대화록 · 대상 닉네임"]
+        ui["Next.js 데모 화면"]
+        parse["Markdown 파싱"]
+        split["대상 화자 발화 분리"]
+        evaluate["규칙 기반 KPI 평가"]
+        prescribe["템플릿 기반 4단 데모 처방"]
+        result["분석 결과 렌더링"]
+
+        input --> ui --> parse --> split --> evaluate --> prescribe --> result
+        result -. "React 화면 상태만 사용 · 영속 저장 없음" .-> ui
+    end
+
+    subgraph account["선택적 계정·테스트 구독 경로"]
+        google["Google 로그인"]
+        auth["Supabase Auth"]
+        client["브라우저 Supabase 세션"]
+        api["Next.js 테스트 계정 API"]
+        verify["인증 토큰 · 인증된 Google 이메일 · 서버 허용목록 검증"]
+        rpc["service-role 전용 RPC"]
+        db[("Supabase 테스트 멤버십·모의 결제 이벤트")]
+        deleteData["테스트 사용자 데이터 삭제 RPC"]
+        deleteAuth["Supabase Auth 계정 삭제"]
+
+        google --> auth --> client --> api --> verify --> rpc --> db
+        verify --> deleteData --> db
+        deleteData --> deleteAuth
+    end
+```
+
 ## ✅ 현재 상태
 - 핵심 파서 및 KPI 엔진 검증 완료
 - 자동 테스트: 7개 테스트 suite, 22개 테스트 통과 (파서, 발화 분리, KPI, 게스트 분석, 데모 프로필/테스트 계정, RPC timeout 회귀)
