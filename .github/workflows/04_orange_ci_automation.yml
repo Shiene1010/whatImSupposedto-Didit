@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-node: "20"
+          node-version: "20"
           cache: "npm" # node_modules 캐싱 레이어 활성화로 빌드 타임 단축
 
       # 3. 프로젝트 의존성 모듈 설치 (잠금 파일 기준 무결성 설치)
@@ -31,6 +31,9 @@ jobs:
       # 4. TypeScript 컴파일 무결성 검증 (빌드 에러 체크)
       - name: Compile TypeScript Verification
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       # 5. Core 로직에 대한 테스트 스위트 구동
       - name: Execute Automated Regression Tests

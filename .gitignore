@@ -2,6 +2,7 @@
 node_modules/
 
 # Build output
+.next/
 /dist/
 build/
 coverage/
@@ -37,3 +38,4 @@ supabase/migrations/
 /tmp/
 *.tmp
 *.swp
+.vercel
