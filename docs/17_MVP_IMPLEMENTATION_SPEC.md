@@ -2,7 +2,7 @@
 
 > 문서 성격: 구현 계약 및 작업 순서
 > 기준일: 2026-10-27
-> 제품 의도: [MVP 제품 요구사항 원문](whatI'mSupposedto-Didit.md)
+> 제품 의도: [MVP reference](mvp_refs.md)
 > 현재 동작: [데모 웹 UI 안내](16_DEMO_WEB_UI.md)
 > 에이전트 규칙: [mvp-agent.agent.md](../.github/agents/mvp-agent.agent.md)
 
@@ -32,9 +32,9 @@ MVP는 아래의 게스트 사용자 여정을 먼저 완성한다.
 | Markdown | `parseMarkdown` | Front Matter, 인용구, 체크리스트를 파싱. `quotes`, `todoItems`, `frontMatter`, `rawBody` 반환 |
 | 발화 분리 | `splitScriptByUser(script, nickname)` | 볼드, 대괄호, `닉네임:` 표기에서 지정 닉네임 발화를 추출 |
 | KPI | `evaluatePurpleKpi(nickname, parsedGoal, speeches)` | 키워드/트리거 기반 규칙 신호 및 근거 문장 반환. 의미 해석이나 완료 증명은 아님 |
-| 데모 분석 | `analyzeDemoSession(goal, log)` | 현재는 닉네임 `Demo`를 내부에서 고정하고 자유문 각 줄을 Demo 발화로 감쌈 |
+| 데모 분석 | `analyzeDemoSession(goal, log, targetNickname)` | 원본 대화록과 명시적 대상 닉네임을 기존 splitter에 전달 |
 | 처방 | `DemoPrescription` | `originalTarget`, `fiveYearOldVersion`, `cheatKeyAction`, `phonicsSound`의 로컬 템플릿 |
-| UI | 단일 게스트 화면 | 샘플 불러오기, 목표/기록 입력, 분석 버튼, 처방/KPI 결과. 현재 닉네임과 원본 화자 파싱 상태는 입력/표시하지 않음 |
+| UI | 단일 게스트 화면 | 목표/기록/닉네임 입력, 샘플 불러오기, 파싱/발화 추출 미리보기, 처방 및 match 근거 표시 |
 | 영속성 | 없음 | 입력은 React 메모리 상태에만 있고 새로고침하면 사라짐 |
 | AI | 제품용 연결 없음 | 데모 처방은 규칙 기반이며 외부 모델 호출을 하지 않음 |
 | 데이터베이스 | Supabase 원격 DB | 현재 앱 게스트 분석은 DB를 사용하지 않음. 운영 테이블과 권한은 [문서 14](14_SUPABASE_PROJECT_STATUS.md) 참고 |
@@ -185,7 +185,7 @@ src/metrics/purpleKpiEngine.ts
 
 각 스프린트는 현재 구현을 기준으로 작은 검증 가능한 결과를 만든다. 스프린트 순서는 기능 간 선행 조건을 반영하며, Sprint 3과 Sprint 4는 Sprint 2 이후 병렬 진행이 가능하다. Sprint 5는 네 구현 스프린트가 끝난 후에만 완료한다. 추정 기간/스토리 포인트는 팀 용량이 정해지지 않아 적지 않는다.
 
-### Sprint 1 — 입력 계약 명확화
+### Sprint 1 — 입력 계약 명확화 ✅
 
 **목표:** 데모에서 대화록의 실제 화자와 분석 대상 닉네임을 정확히 구분한다.
 
@@ -205,7 +205,7 @@ src/metrics/purpleKpiEngine.ts
 
 **산출물 경로:** `src/app/page.tsx`, `src/demo/demoSession.ts`, `tests/demoSession.test.ts`.
 
-### Sprint 2 — 파싱 결과 투명성
+### Sprint 2 — 파싱 결과 투명성 ✅
 
 **목표:** 사용자가 입력한 목표와 대화록이 어떤 데이터로 해석됐는지 보여준다.
 
@@ -225,7 +225,7 @@ src/metrics/purpleKpiEngine.ts
 
 **산출물 경로:** `src/app/page.tsx`, 필요 시 현재 앱 CSS, `tests/demoSession.test.ts`.
 
-### Sprint 3 — KPI 시도 신호와 근거
+### Sprint 3 — KPI 시도 신호와 근거 ✅
 
 **목표:** 규칙 기반 판정을 과장하지 않고, 신호가 난 이유를 사용자가 확인하게 한다.
 
@@ -246,7 +246,7 @@ src/metrics/purpleKpiEngine.ts
 
 **산출물 경로:** `src/app/page.tsx`, `src/metrics/purpleKpiEngine.ts`(요구 시에만), `tests/`, `docs/05_PURPLE_KPI_VALUATION_ENGINE.md`.
 
-### Sprint 4 — 다음 행동 템플릿
+### Sprint 4 — 다음 행동 템플릿 ✅
 
 **목표:** 사용자의 실제 목표와 연결된, 작고 즉시 시작 가능한 규칙 기반 제안을 제공한다.
 
@@ -267,7 +267,7 @@ src/metrics/purpleKpiEngine.ts
 
 **산출물 경로:** `src/demo/demoSession.ts`, `src/app/page.tsx`, `tests/demoSession.test.ts`, `docs/16_DEMO_WEB_UI.md`.
 
-### Sprint 5 — 데모 릴리스 검증
+### Sprint 5 — 데모 릴리스 검증 🔄
 
 **목표:** 완성된 핵심 게스트 흐름을 실제 시연할 수 있게 품질·개인정보·배포 상태를 확인한다.
 

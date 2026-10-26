@@ -1,5 +1,5 @@
-import { parseMarkdown } from '../core/parser/mdStaticParser';
-import { splitScriptByUser } from '../core/splitter/scriptSplitter';
+import { parseMarkdown, ParsedMarkdown } from '../core/parser/mdStaticParser';
+import { splitScriptByUser, UserSpeech } from '../core/splitter/scriptSplitter';
 import { evaluatePurpleKpi, KpiMatchReport } from '../metrics/purpleKpiEngine';
 
 export interface DemoPrescription {
@@ -11,18 +11,31 @@ export interface DemoPrescription {
 
 export interface DemoAnalysis {
   prescription: DemoPrescription;
+  parsedGoal: ParsedMarkdown;
+  extractedSpeeches: UserSpeech[];
   report: KpiMatchReport;
-  speechCount: number;
+  targetNickname: string;
 }
 
-const DEMO_NICKNAME = 'Demo';
-
 function asGoalMarkdown(goal: string): string {
-  return goal
-    .split(/\r?\n/)
+  const lines = goal.split(/\r?\n/);
+  const hasFrontMatter = lines[0]?.trim() === '---';
+  let frontMatterDelimiters = 0;
+  return lines
     .map((line) => {
       const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('>') || /^-\s+\[[ xX]\]/.test(trimmed) || trimmed.startsWith('#')) {
+      if (hasFrontMatter && trimmed === '---' && frontMatterDelimiters < 2) {
+        frontMatterDelimiters++;
+        return line;
+      }
+
+      if (
+        (hasFrontMatter && frontMatterDelimiters === 1)
+        || !trimmed
+        || trimmed.startsWith('>')
+        || /^-\s+\[[ xX]\]/.test(trimmed)
+        || trimmed.startsWith('#')
+      ) {
         return line;
       }
       return `> ${trimmed}`;
@@ -30,37 +43,43 @@ function asGoalMarkdown(goal: string): string {
     .join('\n');
 }
 
-function asDemoTranscript(log: string): string {
-  return log
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => `**${DEMO_NICKNAME}**: ${line}`)
-    .join('\n');
-}
+export function analyzeDemoSession(goal: string, log: string, targetNickname: string): DemoAnalysis {
+  const normalizedNickname = targetNickname.trim();
+  if (!normalizedNickname) {
+    throw new Error('대화록에서 찾을 닉네임을 입력해 주세요.');
+  }
 
-export function analyzeDemoSession(goal: string, log: string): DemoAnalysis {
   const parsedGoal = parseMarkdown(asGoalMarkdown(goal.trim()));
-  const originalTarget = parsedGoal.quotes[0] ?? parsedGoal.todoItems[0]?.text;
+  const originalTarget = parsedGoal.quotes[0]
+    ?? parsedGoal.todoItems.find((item) => !item.completed)?.text
+    ?? parsedGoal.todoItems[0]?.text;
   if (!originalTarget) {
     throw new Error('목표를 한 줄 이상 적어주세요.');
   }
 
-  const speeches = splitScriptByUser(asDemoTranscript(log), DEMO_NICKNAME);
-  const report = evaluatePurpleKpi(DEMO_NICKNAME, parsedGoal, speeches);
-  const gentlerTarget = originalTarget
-    .replace(/완벽하게|완벽히|완벽한|원어민처럼/g, '')
-    .replace(/\s+/g, ' ')
-    .trim() || originalTarget;
+  const speeches = splitScriptByUser(log, normalizedNickname);
+  const report = evaluatePurpleKpi(normalizedNickname, parsedGoal, speeches);
+  const gentlerTarget = simplifyTarget(originalTarget);
 
   return {
+    parsedGoal,
+    extractedSpeeches: speeches,
     prescription: {
       originalTarget,
-      fiveYearOldVersion: `“${gentlerTarget}”을 한 번만 해봐요.`,
-      cheatKeyAction: `지금 “${gentlerTarget}”을 완벽하지 않아도 1분만 시작해요.`,
+      fiveYearOldVersion: `“${gentlerTarget}” — 딱 한 번만 해봐요.`,
+      cheatKeyAction: `지금 1분만 시작해요: ${gentlerTarget}`,
       phonicsSound: '시-작-해-보자',
     },
     report,
-    speechCount: speeches.length,
+    targetNickname: normalizedNickname,
   };
+}
+
+function simplifyTarget(target: string): string {
+  const simplified = target
+    .replace(/완벽하게|완벽히|완벽한|원어민처럼/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return simplified || target;
 }

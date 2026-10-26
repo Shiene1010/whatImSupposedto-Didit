@@ -4,24 +4,29 @@ import { useState } from 'react';
 import { analyzeDemoSession, DemoAnalysis } from '../demo/demoSession';
 
 const SAMPLE_GOAL = '매일 영어 회화 한 문장 완벽하게 외우고 원어민처럼 뱉기';
+const SAMPLE_NICKNAME = 'EasyPeasy';
 const SAMPLE_LOG = [
-  '오늘 영단어랑 회화 한 문장 간신히 외웠어요. 완벽하게 안 외워져서 힘들었지만 포기할 뻔한 걸 넘겼어요.',
-  '그래도 완전히 놓지 않고 소리 내서 크게 세 번 읽었습니다. 톡-투-미-나우!',
+  '**Sara**: 오늘 오전 스트레칭을 완료했어요.',
+  '**EasyPeasy**: 오늘 영단어랑 회화 한 문장을 간신히 외웠어요. 완벽하진 않았지만 시도했어요.',
+  '[EasyPeasy]: 소리 내서 크게 세 번 읽었습니다. 톡-투-미-나우!',
+  'Rina: 다음에는 저도 해볼게요.',
 ].join('\n');
 
 export default function HomePage() {
   const [goal, setGoal] = useState('');
   const [log, setLog] = useState('');
+  const [targetNickname, setTargetNickname] = useState('');
   const [analysis, setAnalysis] = useState<DemoAnalysis | null>(null);
   const [error, setError] = useState('');
 
-  function runAnalysis(nextGoal = goal, nextLog = log) {
+  function runAnalysis(nextGoal = goal, nextLog = log, nextNickname = targetNickname) {
     setGoal(nextGoal);
     setLog(nextLog);
+    setTargetNickname(nextNickname);
     setError('');
 
     try {
-      setAnalysis(analyzeDemoSession(nextGoal, nextLog));
+      setAnalysis(analyzeDemoSession(nextGoal, nextLog, nextNickname));
     } catch (analysisError) {
       setAnalysis(null);
       setError(analysisError instanceof Error ? analysisError.message : '분석 중 문제가 생겼어요.');
@@ -29,7 +34,7 @@ export default function HomePage() {
   }
 
   function loadSample() {
-    runAnalysis(SAMPLE_GOAL, SAMPLE_LOG);
+    runAnalysis(SAMPLE_GOAL, SAMPLE_LOG, SAMPLE_NICKNAME);
   }
 
   return (
@@ -78,37 +83,60 @@ export default function HomePage() {
         </div>
 
         <div className="input-grid">
-          <label className="input-card goal-card">
+          <div className="input-card goal-card">
             <span className="field-topline">
               <span className="field-icon goal-icon">01</span>
-              <span className="field-label">내가 하려던 것</span>
+              <label className="field-label" htmlFor="goal-input">내가 하려던 것</label>
               <span className="field-hint">목표</span>
             </span>
             <textarea
+              id="goal-input"
               value={goal}
-              onChange={(event) => setGoal(event.target.value)}
+              onChange={(event) => {
+                setGoal(event.target.value);
+                setAnalysis(null);
+                setError('');
+              }}
               placeholder={'예: 매일 영어 회화 한 문장 완벽하게 외우기'}
               rows={5}
               aria-label="이루고 싶은 목표"
             />
             <span className="field-footnote">잘 정리하지 않아도 괜찮아요. 생각난 그대로 적어주세요.</span>
-          </label>
+          </div>
 
-          <label className="input-card log-card">
+          <div className="input-card log-card">
             <span className="field-topline">
               <span className="field-icon log-icon">02</span>
-              <span className="field-label">실제로 해본 것</span>
+              <label className="field-label" htmlFor="log-input">실제로 해본 것</label>
               <span className="field-hint">기록</span>
             </span>
             <textarea
+              id="log-input"
               value={log}
-              onChange={(event) => setLog(event.target.value)}
+              onChange={(event) => {
+                setLog(event.target.value);
+                setAnalysis(null);
+                setError('');
+              }}
               placeholder={'예: 한 문장을 세 번 소리 내 읽었어. 완벽하진 않았지만 해냈어.'}
               rows={5}
               aria-label="실제로 한 일"
             />
+            <label className="field-hint nickname-label" htmlFor="nickname-input">분석할 닉네임</label>
+            <input
+              id="nickname-input"
+              className="nickname-input"
+              value={targetNickname}
+              onChange={(event) => {
+                setTargetNickname(event.target.value);
+                setAnalysis(null);
+                setError('');
+              }}
+              placeholder="예: EasyPeasy"
+              aria-label="대화록에서 분석할 닉네임"
+            />
             <span className="field-footnote">작은 시도, 중간에 멈춘 순간도 기록이 될 수 있어요.</span>
-          </label>
+          </div>
         </div>
 
         {error && <p className="form-error" role="alert">{error}</p>}
@@ -118,7 +146,7 @@ export default function HomePage() {
             className="analyze-button"
             type="button"
             onClick={() => runAnalysis()}
-            disabled={!goal.trim()}
+            disabled={!goal.trim() || !targetNickname.trim()}
           >
             오늘의 작은 성취 찾기 <span aria-hidden="true">→</span>
           </button>
@@ -126,20 +154,73 @@ export default function HomePage() {
       </section>
 
       {analysis ? (
-        <section className="results" aria-live="polite">
+        <section className="results">
           <div className="result-header">
             <div>
               <span className="section-kicker">YOUR MOMENT</span>
               <h2>오늘의 발견</h2>
             </div>
-            <span className={`achievement-badge ${analysis.report.isAchieved ? 'achieved' : 'not-achieved'}`}>
+            <span
+              className={`achievement-badge ${analysis.report.isAchieved ? 'achieved' : 'not-achieved'}`}
+              role="status"
+              aria-live="polite"
+            >
               <span aria-hidden="true">{analysis.report.isAchieved ? '✓' : '○'}</span>
-              {analysis.report.isAchieved ? '작은 시도, 해냈어요' : '다음 한 걸음이 남아 있어요'}
+              {analysis.report.isAchieved ? '규칙에서 시도 신호를 찾았어요' : '다음 한 걸음이 남아 있어요'}
             </span>
           </div>
 
           <div className="result-grid">
             <div className="prescription-panel">
+              <div className="parse-preview">
+                <div className="parse-preview-heading">
+                  <span className="section-kicker">PARSED INPUT</span>
+                  <h3>이렇게 읽었어요</h3>
+                </div>
+                {analysis.parsedGoal.frontMatter.persona && (
+                  <span className="persona-chip">페르소나 · {analysis.parsedGoal.frontMatter.persona}</span>
+                )}
+                {analysis.parsedGoal.quotes.length > 0 && (
+                  <div className="parsed-group">
+                    <span className="parsed-label">목표 인용구</span>
+                    {analysis.parsedGoal.quotes.map((quote, index) => (
+                      <p className="parsed-quote" key={`${index}-${quote}`}>{quote}</p>
+                    ))}
+                  </div>
+                )}
+                {analysis.parsedGoal.todoItems.length > 0 && (
+                  <div className="parsed-group">
+                    <span className="parsed-label">체크리스트</span>
+                    <ul className="parsed-todos">
+                      {analysis.parsedGoal.todoItems.map((todo, index) => (
+                        <li key={`${index}-${todo.text}`}>
+                          <span aria-hidden="true">{todo.completed ? '✓' : '○'}</span>
+                          <span>{todo.text}</span>
+                          <small>{todo.completed ? '완료 표시' : '미완료 표시'}</small>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <div className="extracted-speeches">
+                <div className="parse-preview-heading">
+                  <span className="parsed-label">대상 발화 · {analysis.targetNickname}</span>
+                  <small>{analysis.extractedSpeeches.length}개</small>
+                </div>
+                {analysis.extractedSpeeches.length > 0 ? (
+                  <ul>
+                    {analysis.extractedSpeeches.map((speech) => (
+                      <li key={`${speech.lineNumber}-${speech.content}`}>
+                        <span>{speech.lineNumber}</span>
+                        <p>{speech.content}</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-speeches">이 닉네임으로 시작하는 발화를 찾지 못했어요.</p>
+                )}
+              </div>
               <div className="prescription-heading">
                 <span className="prescription-spark">✳</span>
                 <div>
@@ -180,25 +261,31 @@ export default function HomePage() {
                 <>
                   <div className="achievement-meter">
                     <div className="meter-copy">
-                      <span>시도 신호</span>
-                      <strong>{analysis.report.achievementRate}<small>%</small></strong>
+                      <span>규칙 일치 발화</span>
+                      <strong>{analysis.report.matchedSpeeches.length}<small> / {analysis.extractedSpeeches.length}</small></strong>
                     </div>
-                    <div className="meter-track"><span style={{ width: `${analysis.report.achievementRate}%` }} /></div>
-                    <span className="meter-caption">기록한 {analysis.speechCount}개 문장 중 {analysis.report.matchedSpeeches.length}개에서 발견했어요</span>
+                    <span className="meter-caption">추출된 대상 발화 중 규칙에 일치한 문장 수예요. 달성률은 아닙니다.</span>
                   </div>
-                  <div className="evidence-quote">
-                    <span className="quote-mark">“</span>
-                    <p>{analysis.report.matchedSpeeches[0].matchedText}</p>
-                    <span className="evidence-reason">{analysis.report.matchedSpeeches[0].reason}</span>
+                  <div className="evidence-list">
+                    {analysis.report.matchedSpeeches.map((speech) => (
+                      <article className="evidence-quote" key={`${speech.lineNumber}-${speech.matchedText}`}>
+                        <span className="quote-mark" aria-hidden="true">“</span>
+                        <p>{speech.matchedText}</p>
+                        <span className="evidence-reason">{speech.reason}</span>
+                      </article>
+                    ))}
                   </div>
-                  {analysis.report.matchedSpeeches.length > 1 && (
-                    <p className="more-evidence">그리고 {analysis.report.matchedSpeeches.length - 1}개의 시도도 더 발견했어요.</p>
-                  )}
+                  <p className="signal-caveat">키워드/행동 단어가 포함됐다는 규칙 신호입니다. 실제 행동을 확인하거나 문맥을 이해한 결과는 아니에요.</p>
                 </>
+              ) : analysis.extractedSpeeches.length === 0 ? (
+                <div className="empty-evidence">
+                  <span aria-hidden="true">☁</span>
+                  <p>“{analysis.targetNickname}” 닉네임의 발화를 찾지 못했어요.<br />화자 표기와 닉네임을 확인해 주세요.</p>
+                </div>
               ) : (
                 <div className="empty-evidence">
                   <span aria-hidden="true">☁</span>
-                  <p>아직 기록에서 시도를 찾지 못했어요.<br />작은 행동부터 기록해도 괜찮아요.</p>
+                  <p>추출한 발화에서 목표 관련 규칙 신호를 찾지 못했어요.<br />시도한 일을 기록에 더해 다시 살펴볼 수 있어요.</p>
                 </div>
               )}
               <div className="privacy-footnote"><span aria-hidden="true">▣</span> 이 분석은 브라우저에서만 실행돼요. 입력한 내용은 저장되지 않습니다.</div>

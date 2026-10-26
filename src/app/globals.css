@@ -188,6 +188,18 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
   line-height: 1.8;
 }
 .input-card textarea::placeholder { color: #b0b7ac; }
+.nickname-label { display: block; margin-top: 9px; color: #8a958a; font-size: 10px; font-weight: 700; }
+.nickname-input {
+  width: 100%;
+  margin: 5px 0 10px;
+  padding: 9px 10px;
+  border: 1px solid #e6e9df;
+  border-radius: 7px;
+  background: #fff;
+  color: #37443c;
+  font-size: 12px;
+}
+.nickname-input::placeholder { color: #b0b7ac; }
 .field-footnote { display: block; padding-top: 10px; border-top: 1px solid #eff0e9; color: #9aa197; font-size: 10px; line-height: 1.5; }
 .submit-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 22px; }
 .submit-note { color: #8a958c; font-size: 11px; }
@@ -235,6 +247,24 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
 .result-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-top: 24px; }
 .prescription-panel, .evidence-panel { border: 1px solid #e9ebe3; border-radius: 13px; padding: 21px; }
 .prescription-panel { background: #fbfcf8; }
+.parse-preview { display: grid; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid #e9ece3; }
+.parse-preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.parse-preview-heading h3 { margin: 4px 0 0; color: #39473d; font-family: var(--serif); font-size: 14px; font-weight: 400; }
+.parse-preview-heading > small { color: #8a958a; font-size: 10px; }
+.persona-chip { justify-self: start; padding: 5px 8px; border-radius: 6px; background: #edf2e8; color: #64785b; font-size: 9px; }
+.parsed-group { display: grid; gap: 6px; }
+.parsed-label { color: #818c7e; font-size: 10px; font-weight: 700; }
+.parsed-quote { margin: 0; padding: 8px 10px; border-left: 2px solid #b8c9a8; background: #fff; color: #4b574d; font-size: 11px; line-height: 1.6; }
+.parsed-todos, .extracted-speeches ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.parsed-todos li { display: flex; align-items: baseline; gap: 7px; color: #536055; font-size: 10px; }
+.parsed-todos li > span:first-child { color: #77906a; }
+.parsed-todos li small { margin-left: auto; color: #a0a69c; font-size: 9px; white-space: nowrap; }
+.extracted-speeches { display: grid; gap: 9px; padding: 14px 0; border-bottom: 1px solid #e9ece3; }
+.extracted-speeches ul { max-height: 180px; overflow-y: auto; }
+.extracted-speeches li { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; border-radius: 7px; background: #fff; }
+.extracted-speeches li > span { color: #97a28f; font-size: 9px; }
+.extracted-speeches li p { margin: 0; color: #566157; font-size: 10px; line-height: 1.6; word-break: keep-all; }
+.no-speeches { margin: 0; color: #92998f; font-size: 10px; line-height: 1.6; }
 .prescription-heading, .evidence-title { display: flex; align-items: center; gap: 11px; }
 .prescription-spark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 11px; background: #edf2e5; color: #789161; }
 .prescription-heading h3, .evidence-title h3 { margin: 4px 0 0; color: #39473d; font-family: var(--serif); font-size: 16px; font-weight: 400; }
@@ -252,14 +282,14 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
 .achievement-meter { margin: 23px 0 17px; }
 .meter-copy { display: flex; align-items: center; justify-content: space-between; color: #899187; font-size: 10px; }
 .meter-copy strong { color: #587a56; font-size: 20px; }
-.meter-copy small { font-size: 11px; }
-.meter-track { height: 6px; margin-top: 8px; overflow: hidden; border-radius: 9px; background: #edf0e9; }
-.meter-track span { display: block; height: 100%; min-width: 5px; border-radius: inherit; background: #8eaa76; transition: width .4s; }
+.meter-copy small { color: #899187; font-size: 11px; font-weight: 500; }
 .meter-caption { display: block; margin-top: 7px; color: #9aa197; font-size: 9px; }
+.evidence-list { display: grid; gap: 9px; }
 .evidence-quote { position: relative; padding: 15px 15px 14px 20px; border-left: 2px solid #c6d5b4; border-radius: 0 8px 8px 0; background: #f6f7f1; }
 .quote-mark { position: absolute; top: 3px; left: 8px; color: #afc09f; font-family: Georgia, serif; font-size: 23px; }
 .evidence-quote p { margin: 4px 0 10px; color: #485349; font-family: var(--serif); font-size: 13px; line-height: 1.7; word-break: keep-all; }
 .evidence-reason { color: #8a9686; font-size: 9px; }
+.signal-caveat { margin: 12px 0 0; color: #9a8c76; font-size: 9px; line-height: 1.6; }
 .more-evidence { margin: 10px 0 0; color: #778673; font-size: 10px; }
 .empty-evidence { display: grid; flex: 1; place-content: center; min-height: 185px; text-align: center; }
 .empty-evidence span { color: #b5c2a5; font-size: 28px; }

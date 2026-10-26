@@ -6,7 +6,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 
 ## ✅ 현재 상태
 - 핵심 파서 및 KPI 엔진 검증 완료
-- 테스트 스위트 통과: 5개 테스트 스위트, 9개 테스트 통과
+- 자동 테스트는 파서, 발화 분리, KPI, 게스트 분석, RPC timeout 회귀를 포함합니다.
 - 로그인 없이 체험하는 데모 UI: 목표·행동 기록 분석, 4단 규칙 기반 데모 처방
 - Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
 - GitHub webhook 서명 검증 및 비공개 전달 메타데이터 저장 구현
@@ -31,6 +31,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - [docs/15_WEBHOOK_AND_RPC_SAFETY.md](docs/15_WEBHOOK_AND_RPC_SAFETY.md): GitHub webhook 서명·중복 전달·오류 처리 및 RPC timeout 한계
 - [docs/16_DEMO_WEB_UI.md](docs/16_DEMO_WEB_UI.md): 데모 웹 UI 사용 방법, 로컬 분석 및 개인정보 처리 방식
 - [docs/17_MVP_IMPLEMENTATION_SPEC.md](docs/17_MVP_IMPLEMENTATION_SPEC.md): MVP 사용자 흐름, 코드/데이터 계약, 작업 분해 및 완료 기준
+- [docs/mvp_refs.md](docs/mvp_refs.md): 장기 제품 비전과 과거 요구사항 원문 (구현 상태의 근거가 아닌 참고 자료)
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 

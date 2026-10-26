@@ -24,7 +24,7 @@ Help a perfectionist user notice one small attempt toward a goal and make the ne
 - Guest input must remain in transient browser component state. Do not send it to a database, AI provider, analytics, or logging endpoint, or persist it across refreshes, unless the user explicitly approves a scope change and its privacy requirements are implemented.
 - Existing KPI results are keyword/rule-based signals. Show the matching evidence and do not present a match as proof of completion, semantic understanding, or clinical advice.
 - Demo prescriptions are rule-based templates, not AI output. Do not claim Gemini or OpenAI generation unless an integration is configured, securely implemented, and verified.
-- Treat `docs/whatI'mSupposedto-Didit.md` as product intent. Verify each proposed feature against current code and the live Supabase schema before describing it as implemented.
+- Treat `docs/mvp_refs.md` as legacy product intent. Verify each proposed feature against current code and the live Supabase schema before describing it as implemented.
 - Login utilities in `src/lib/auth.ts` do not mean that login, account migration, quotas, or saved prescriptions are part of the current guest journey.
 - Do not assume peer sharing, realtime feedback, BYOK key storage, demo-account resets, or IndexedDB sync are implemented or approved. Do not add them without explicit scope, data-ownership, privacy, and security decisions.
 - Never place service-role credentials or provider secrets in browser code. Do not autofill, log, or commit user API keys. Browser storage is not a secure secret vault.
