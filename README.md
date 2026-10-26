@@ -77,61 +77,101 @@ flowchart TD
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 
-text
-whatImSupposedto-Didit/
-├── .github/workflows/
-│   ├── 04_orange_ci_automation.yml  # Push/PR 시 TypeScript 컴파일 및 파싱 무결성 검증 (CI)
-│   └── 05_purple_cd_deployment.yml  # main 브랜치 병합 시 Supabase Edge Functions 무인 배포 (CD)
-├── assets/
-│   ├── stage_02_samples/            # 정적 프로토타입 검증용 가상 마크다운 자산 (.md)
-│   ├── stage_03_generated/          # AI 데이터셋 제너레이터가 대량 양산한 합성 텍스트 덤프 폴더
-│   └── stage_05_repository_pool/    # 실운영자가 라이브 대화록을 깃 푸시하여 적재하는 실전 풀
-├── database/migrations/
-│   ├── 02_init_text_schema.sql      # Supabase 테넌트 및 처방전 적재 DDL 스키마
-│   ├── 05_rls_theft_policy.sql      # 동료 표현 합법적 스틸(Steal)을 위한 Row Level Security 정책
-│   ├── 08_rollback_rpc.sql          # 충돌 시 데이터 원상 복구를 위한 PostgreSQL RPC 함수
-│   └── system_tables_setup.sql      # 피처 플래그 및 블루/그린 라우팅 설정 테이블
-├── docs/                            # 시스템 설계, 운영 및 프로젝트 상태 문서
-│   ├── 01_ARCHITECTURE_OVERVIEW.md
-│   ├── 02_CORE_PARSER_SPECIFICATION.md
-│   ├── 03_AI_PRESCRIPTION_SCHEMA.md
-│   ├── 04_PERSONA_METADATA_REGISTRY.md
-│   ├── 05_PURPLE_KPI_VALUATION_ENGINE.md
-│   ├── 06_SYNTHETIC_DATA_FACTORY_GUIDE.md
-│   ├── 07_ORANGE_CI_INTEGRATION_TEST.md
-│   ├── 08_PURPLE_CD_SUPABASE_DEPLOYMENT.md
-│   ├── 09_DATABASE_MIGRATION_AND_RLS.md
-│   ├── 10_GREEN_CIRCUIT_BREAKER_SHELTER.md
-│   ├── 11_YELLOW_FEATURE_FLAG_HOTFIX.md
-│   └── 12_BLUE_TRANSACTION_ROLLBACK_GATE.md
-├── src/
-│   ├── core/                        # [Phase 1: 코어 제품 레이어] 정적 파서, 스플리터, GPT-4o 엔진
-│   ├── automation/                  # [Phase 3: 양산 레이어] 페르소나 메타데이터 및 합성 제너레이터
-│   ├── metrics/                     # [Phase 2: 판정 레이어] 🟣 Purple KPI 단 한 번의 실전 성취 판정기
-│   └── operation/                   # [Phase 6~8: 운영 가드레일] 서킷 브레이커, 피처 플래그, 롤백 핸들러
-└── tests/                           # 유닛, 스냅샷, CI 환경 전수 스트레스 테스트 스위트
-Use code with caution.
+```mermaid
+flowchart TD
+    repo["whatImSupposedto-Didit/"]
+
+    repo --> github[".github/"]
+    github --> workflows["workflows/"]
+    workflows --> ci["04_orange_ci_automation.yml"]
+    workflows --> cd["05_purple_cd_deployment.yml"]
+    github --> agents["agents/"]
+
+    repo --> assets["assets/"]
+    assets --> samples["stage_02_samples/"]
+    assets --> architecture["data-pipeline-security-architecture.png"]
+
+    repo --> database["database/migrations/"]
+    database --> dbmigrations["Schema · RLS · webhook · demo-account SQL"]
+
+    repo --> docs["docs/"]
+    docs --> designDocs["01–06 · 아키텍처 · 파서 · 처방 · 페르소나 · KPI · 데이터"]
+    docs --> opsDocs["07–12 · CI/CD · DB/RLS · circuit breaker · feature flag · rollback"]
+    docs --> productDocs["13–18 · OAuth · Supabase · webhook · demo UI · MVP · test account"]
+    docs --> references["mvp_refs.md · 과거 요구사항 참고"]
+
+    repo --> presentation["presentation/ · 별도 소개 사이트"]
+    repo --> source["src/"]
+    source --> app["app/ · Next.js UI 및 API routes"]
+    source --> automation["automation/ · 페르소나 및 데이터 생성"]
+    source --> core["core/ · parser · splitter · AI engine"]
+    source --> demo["demo/ · 분석 및 로컬 테스트 프로필"]
+    source --> lib["lib/ · Supabase 및 서버 인증"]
+    source --> metrics["metrics/ · KPI 판정"]
+    source --> operation["operation/ · 장애·기능 플래그·복구"]
+
+    repo --> supabase["supabase/"]
+    supabase --> functions["functions/repo-webhook-receiver/"]
+    supabase --> migrations["migrations/"]
+    repo --> tests["tests/ · Jest 단위·통합 테스트"]
+    repo --> package["package.json · package-lock.json"]
+    repo --> readme["README.md"]
+```
 
 🔄 2. 8단계 제품 진화 아키텍처 (The 8-Phase Evolution Model)
 
-본 시스템은 정적 유닛 단위의 동작 보장에서부터 클라우드 무인 자동화, 나아가 실시간 다운타임 제로 제어 단계까지 유기적인 가드레일을 누적 탑재하며 확장됩니다.
-1. Phase 1 (Core MVP): 비정형 마크다운 Front Matter 및 > , - [ ] 토큰 추출 파이프라인 수립.
-2. Phase 2 (Proof with Samples): 목표 키워드가 차주 대화록 내부에서 완벽히 발견되는지 대조하는 성취 판정 로그 구현.
-3. Phase 3 (Synthetic Factory): 4대 페르소나(이지비지, 뉴이어, 사라, 리나)에 빙의한 가상 자산 대량 자동 생성.
-4. Phase 4 (Orange CI): GitHub Actions를 통해 양산된 대량의 텍스트 자산 깨짐 현상을 빌드 타임에 전수 검사하는 오렌지 가드레일.
-5. Phase 5 (Purple CD & RLS): Supabase 에지 배포 및 동료 표현 합법적 스틸(Steal) 격리 보안 레이어 구축.
-6. Phase 6 (Green Fault-Tolerant): AI API 통신 지연이 5초를 초과하면 회로를 즉시 차단(OPEN) 후 브라우저 IndexedDB 대피소로 분기 라우팅하여 유실률 0% 달성.
-7. Phase 7 (Yellow Feature Flag): 실운영 에러 발생 시 데이터베이스 Config 토글 관리 장치를 통해 코드 재배포 없이 특정 컴포넌트를 무다운타임 긴급 진화.
-8. Phase 8 (Blue Safe Governance): 8초 데드라인 타이머 기반 자동 복구 트랜잭션 및 다운타임 제로 프롬프트 블루/그린 원격 배포 거버넌스 완결.
+```mermaid
+flowchart LR
+    p1["Phase 1 · Core MVP<br/>Markdown 목표 파싱 · 화자 발화 분리"]
+    p2["Phase 2 · KPI 평가<br/>목표와 발화의 성취 신호 판정"]
+    p3["Phase 3 · Synthetic Factory<br/>4개 페르소나 샘플 데이터 생성"]
+    p4["Phase 4 · Orange CI<br/>GitHub Actions 자동 검증"]
+    p5["Phase 5 · Purple CD & RLS<br/>Supabase 배포 · 데이터 접근 정책"]
+    p6["Phase 6 · Green Resilience<br/>Circuit breaker · 로컬 대피 경로"]
+    p7["Phase 7 · Yellow Feature Flags<br/>기능 토글 · 장애 시 우회"]
+    p8["Phase 8 · Blue Safe Governance<br/>RPC timeout 처리 · 릴리스 안전장치"]
+
+    p1 --> p2 --> p3 --> p4 --> p5 --> p6 --> p7 --> p8
+```
 
 📚 3. 엔지니어링 문서 명세 (Documentation Hub)
 
-프로젝트 운영 및 온보딩 문서는 docs/ 디렉토리에서 확인할 수 있습니다.
-• 아키텍처 및 코어 설계: 통합 시스템 흐름(01), 코어 마크다운 파서 및 스플리터 스펙(02), GPT-4o 구조화된 출력 스키마(03)
-• 지표 및 자산 양산: 4대 페르소나 레지스트리(04), 🟣 퍼플 KPI 알고리즘 명세(05), 합성 데이터 팩토리 구동 가이드(06)
-• 인프라 및 자동화: 🟠 오렌지 CI 전수 검사 규칙(07), 🟣 퍼플 CD Supabase 배포 규격(08), DB 스키마 및 RLS 합법 스틸 보안 정책(09)
-• 운영 장애 수호 백서: 🟢 서킷 브레이커 및 로컬 대피소(10), 🟡 피처 플래그 긴급 핫픽스 런북(11), 🔵 8초 롤백 및 블루/그린 라우팅(12)
-• 인증 및 DB 운영: Google OAuth 설정(13), 실제 Supabase 원격 스키마·권한 점검 결과(14)
+상세 문서와 과거 요구사항 참고 자료는 [`docs/`](docs/)에서 확인할 수 있습니다.
+
+```mermaid
+flowchart TD
+    hub["Engineering Documentation · docs/"]
+
+    hub --> architecture["아키텍처 및 코어 설계"]
+    architecture --> d01["01 · 시스템 아키텍처"]
+    architecture --> d02["02 · Markdown parser / splitter"]
+    architecture --> d03["03 · AI 처방 스키마"]
+
+    hub --> product["지표 및 데이터 자산"]
+    product --> d04["04 · 페르소나 레지스트리"]
+    product --> d05["05 · Purple KPI"]
+    product --> d06["06 · 합성 데이터 팩토리"]
+
+    hub --> delivery["인프라 및 배포 자동화"]
+    delivery --> d07["07 · Orange CI"]
+    delivery --> d08["08 · Purple CD / Supabase"]
+    delivery --> d09["09 · DB migration / RLS"]
+
+    hub --> resilience["운영 안전장치"]
+    resilience --> d10["10 · Green circuit breaker"]
+    resilience --> d11["11 · Yellow feature flags"]
+    resilience --> d12["12 · Blue rollback"]
+    resilience --> d15["15 · Webhook / RPC 안전성"]
+
+    hub --> account["인증 및 MVP 운영"]
+    account --> d13["13 · Google OAuth"]
+    account --> d14["14 · Supabase 상태 점검"]
+    account --> d16["16 · 데모 웹 UI"]
+    account --> d17["17 · MVP 구현 명세"]
+    account --> d18["18 · 테스트 계정 초기화"]
+
+    hub --> reference["mvp_refs.md · 과거 요구사항 참고"]
+```
 
 ## 변경사항 전달 규칙
 
