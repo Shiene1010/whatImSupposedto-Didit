@@ -1,5 +1,5 @@
-import { ParsedMarkdown } from '../core/parser/mdStaticParser';
-import { UserSpeech } from '../core/splitter/scriptSplitter';
+import { ParsedMarkdown } from '../core/parser/mdStaticParser.ts';
+import { UserSpeech } from '../core/splitter/scriptSplitter.ts';
 
 export interface KpiMatchReport {
   userNickname: string;

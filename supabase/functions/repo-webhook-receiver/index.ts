@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land"
-import { createClient } from "https://esm.sh"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { parseMarkdown } from "../../../src/core/parser/mdStaticParser.ts"
 import { splitScriptByUser } from "../../../src/core/splitter/scriptSplitter.ts"
 import { evaluatePurpleKpi } from "../../../src/metrics/purpleKpiEngine.ts"
@@ -9,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // CORS 프리플라이트 가드레일 처리
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
