@@ -21,3 +21,9 @@
 ## 실행 및 배포
 
 로컬 실행은 `npm run dev`, 검증은 `npm test -- --runInBand` 및 `npm run build`를 사용합니다. 프로젝트의 기존 Vercel 배포 연결을 통해 기본 브랜치 변경 후 배포할 수 있습니다.
+
+## 별도 시연 배포
+
+- 서비스 소개·발표 흐름: [작게, 해냄 서비스 시연](https://what-im-supposed-to-did-it-presenta.vercel.app/) (`presentation/index.html`, Vercel 프로젝트 `what-im-supposed-to-did-it-presentation`)
+- MVP 입력·분석 체험: https://what-im-supposed-to-did-it.vercel.app/
+- 발표용 사이트는 별도 프로젝트로 배포하며, MVP 체험 링크로 이동할 수 있습니다. 두 페이지의 목적과 배포 단위를 분리합니다.

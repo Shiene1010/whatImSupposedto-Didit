@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f8f8f2">
+    <meta name="description" content="완벽한 계획 대신 오늘 한 번의 실행을 발견하는 작게, 해냄 서비스 시연 소개입니다.">
+    <title>작게, 해냄 — 서비스 시연</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #26342f;
+        --muted: #65736a;
+        --green: #426b52;
+        --green-dark: #31563f;
+        --soft: #edf3eb;
+        --lime: #dce9a5;
+        --paper: #f8f8f2;
+        --line: #e5e8dd;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: inherit; }
+      a:focus-visible { outline: 3px solid #97b47f; outline-offset: 4px; }
+      .wrap { width: min(1080px, calc(100% - 48px)); margin: 0 auto; }
+      header {
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; text-decoration: none; }
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 12px 12px 12px 4px;
+        background: var(--green);
+        color: white;
+      }
+      .eyebrow, .kicker {
+        color: #78876f;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+      }
+      .header-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
+      .hero { padding: 96px 0 82px; }
+      .hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 48px; align-items: center; }
+      h1 {
+        max-width: 720px;
+        margin: 18px 0;
+        font-size: clamp(2.8rem, 7vw, 5.2rem);
+        letter-spacing: -.075em;
+        line-height: 1.13;
+      }
+      h1 span { color: var(--green); }
+      .lead { max-width: 620px; color: var(--muted); font-size: 1.13rem; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+      .button {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        border: 1px solid var(--green);
+        border-radius: 999px;
+        background: var(--green);
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .button:hover { background: var(--green-dark); }
+      .button.secondary { background: transparent; color: var(--green-dark); }
+      .hero-card {
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: white;
+        box-shadow: 0 18px 60px rgba(40, 57, 45, .06);
+      }
+      .hero-card p { margin: 8px 0; }
+      .quote { color: var(--muted); }
+      .step {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 12px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .step-number {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--soft);
+        color: var(--green-dark);
+        font-size: .83rem;
+        font-weight: 700;
+      }
+      section.content { padding: 72px 0; border-top: 1px solid var(--line); }
+      h2 { margin: 8px 0 12px; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -.05em; line-height: 1.25; }
+      .section-lead { max-width: 650px; color: var(--muted); }
+      .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; }
+      .card { padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: white; }
+      .card h3 { margin: 8px 0; font-size: 1.1rem; }
+      .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+      .number { color: var(--green); font-weight: 700; }
+      .example {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 30px;
+      }
+      .example-panel { padding: 24px; border-radius: 20px; background: white; }
+      .example-panel.result { background: var(--soft); }
+      .example-panel p { margin: 8px 0 0; }
+      .note { color: var(--muted); font-size: .88rem; }
+      .final-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 32px;
+        border-radius: 24px;
+        background: #eaf0df;
+      }
+      .final-cta h2 { margin-top: 0; }
+      footer { padding: 28px 0 40px; color: var(--muted); font-size: .85rem; }
+
+      @media (max-width: 720px) {
+        .wrap { width: min(100% - 32px, 560px); }
+        header { height: 64px; }
+        .hero { padding: 68px 0 56px; }
+        .hero-grid, .example { grid-template-columns: 1fr; gap: 24px; }
+        .cards { grid-template-columns: 1fr; }
+        section.content { padding: 54px 0; }
+        .final-cta { align-items: flex-start; flex-direction: column; padding: 24px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a class="brand" href="/" aria-label="작게, 해냄 서비스 시연">
+          <span class="brand-mark" aria-hidden="true">ㄷ</span>
+          <span>작게, 해냄</span>
+        </a>
+        <a class="header-link" href="https://what-im-supposed-to-did-it.vercel.app/">MVP 체험 ↗</a>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <span class="eyebrow">PRODUCT DEMO · 작게, 해냄</span>
+              <h1>완벽한 계획보다,<br><span>오늘 한 번의 실행.</span></h1>
+              <p class="lead">
+                계획을 완성하지 못했다고 오늘이 실패한 건 아니에요.
+                하려던 일과 실제 기록을 나란히 보고, 이미 시작한 작은 순간과 다음 한 걸음을 발견합니다.
+              </p>
+              <div class="actions">
+                <a class="button" href="https://what-im-supposed-to-did-it.vercel.app/">MVP 직접 체험하기 <span aria-hidden="true">&nbsp;→</span></a>
+                <a class="button secondary" href="#how-it-works">시연 흐름 보기</a>
+              </div>
+            </div>
+            <aside class="hero-card" aria-label="제품이 돕는 방식">
+              <span class="kicker">A SMALLER WAY FORWARD</span>
+              <p><strong>원래 목표</strong> <span aria-hidden="true">→</span> 쉬운 말 <span aria-hidden="true">→</span> 작은 행동 <span aria-hidden="true">→</span> 시작 신호</p>
+              <div class="step">
+                <span class="step-number">01</span>
+                <div><strong>있는 그대로 기록</strong><br><span class="quote">목표와 실제로 해본 일을 적어요.</span></div>
+              </div>
+              <div class="step">
+                <span class="step-number">02</span>
+                <div><strong>시도한 순간 확인</strong><br><span class="quote">대상 화자의 기록에서 규칙 신호를 찾아요.</span></div>
+              </div>
+              <div class="step">
+                <span class="step-number">03</span>
+                <div><strong>다음 행동 가볍게</strong><br><span class="quote">바로 시작할 수 있는 작은 행동을 제안해요.</span></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="content" id="how-it-works">
+          <span class="kicker">LIVE DEMO FLOW</span>
+          <h2>시연은 세 단계로 진행됩니다</h2>
+          <p class="section-lead">로그인 없이 예시를 불러오거나 직접 입력해, 기록이 어떻게 작은 다음 행동으로 이어지는지 확인할 수 있습니다.</p>
+          <div class="cards">
+            <article class="card">
+              <span class="number">01 · 목표</span>
+              <h3>하려던 일을 적어요</h3>
+              <p>정리된 계획이 아니어도 괜찮아요. 목표 Markdown이나 한 문장으로 시작합니다.</p>
+            </article>
+            <article class="card">
+              <span class="number">02 · 기록</span>
+              <h3>실제로 한 일을 살펴봐요</h3>
+              <p>대화록과 분석할 닉네임을 입력하면 대상 화자의 발화만 골라 보여줍니다.</p>
+            </article>
+            <article class="card">
+              <span class="number">03 · 다음 한 걸음</span>
+              <h3>작은 시도와 행동을 확인해요</h3>
+              <p>파싱 결과, 규칙 일치 근거, 다음 행동 템플릿을 함께 확인합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content">
+          <span class="kicker">EXAMPLE</span>
+          <h2>완벽하지 않아도, 이미 시작했어요</h2>
+          <p class="section-lead">영어 회화를 완벽히 외우는 대신, 한 문장을 소리 내 읽은 기록을 다음 시작점으로 삼습니다.</p>
+          <div class="example">
+            <div class="example-panel">
+              <span class="kicker">GOAL &amp; NOTE</span>
+              <p><strong>목표</strong> 매일 영어 회화 한 문장 완벽하게 외우기</p>
+              <p><strong>기록</strong> 한 문장을 세 번 소리 내 읽었어요. 완벽하진 않았지만 시도했어요.</p>
+            </div>
+            <div class="example-panel result">
+              <span class="kicker">A SMALL NEXT STEP</span>
+              <p><strong>오늘의 발견</strong> 완벽히 외우지 못했어도, 소리 내 읽기를 시작했어요.</p>
+              <p><strong>다음 행동</strong> 내일은 같은 문장을 한 번 더 읽고, 마음에 드는 표현 하나에 표시해요.</p>
+            </div>
+          </div>
+          <p class="note">예시 결과는 설명을 위한 샘플입니다. 실제 MVP는 키워드/트리거 기반 규칙 신호를 보여주며 의미를 이해하거나 행동 완료를 증명하지 않습니다.</p>
+        </section>
+
+        <section class="content">
+          <div class="final-cta">
+            <div>
+              <span class="kicker">TRY THE MVP</span>
+              <h2>지금 내 기록으로 확인해 보세요</h2>
+              <p class="section-lead">입력은 브라우저에서 분석되며 저장되지 않는 게스트 시연입니다.</p>
+            </div>
+            <a class="button" href="https://what-im-supposed-to-did-it.vercel.app/">MVP 시연 열기 <span aria-hidden="true">&nbsp;→</span></a>
+          </div>
+        </section>
+      </main>
+
+      <footer>작게, 해냄 · 서비스 소개와 MVP 체험은 서로 다른 배포 주소로 운영됩니다.</footer>
+    </div>
+  </body>
+</html>
