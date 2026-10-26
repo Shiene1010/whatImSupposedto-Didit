@@ -24,6 +24,11 @@ jobs:
           node-version: "20"
           cache: "npm" # node_modules 캐싱 레이어 활성화로 빌드 타임 단축
 
+      - name: Setup Deno Environment
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
       # 3. 프로젝트 의존성 모듈 설치 (잠금 파일 기준 무결성 설치)
       - name: Install Production Dependencies
         run: npm ci
@@ -42,6 +47,11 @@ jobs:
           # 가상 프롬프트 실행 및 내부 연동용 더미 변수 주입 가드레일
           NODE_ENV: test
           OPENAI_API_KEY: ${{ secrets.CI_MOCK_OPENAI_KEY }}
+
+      - name: Verify Supabase Edge Function
+        run: |
+          deno check --no-lock supabase/functions/repo-webhook-receiver/index.ts
+          deno test --no-lock supabase/functions/repo-webhook-receiver/*.test.ts
 
       # 6. 빌드 결과 스냅샷 및 아티팩트 보존 기록 (선택 사항)
       - name: Archive Production Build Output

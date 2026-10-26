@@ -8,6 +8,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - 핵심 파서 및 KPI 엔진 검증 완료
 - 테스트 스위트 통과: 3개 테스트 스위트, 4개 테스트 통과
 - Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
+- GitHub webhook 서명 검증 및 비공개 전달 메타데이터 저장 구현
 - 문서 체계 정리 완료: 아키텍처, 파서, AI 처방, KPI, 운영 가드레일 및 DB 상태 문서 포함
 - GitHub 공개 저장소 반영 완료
 
@@ -26,6 +27,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - [docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md](docs/12_BLUE_TRANSACTION_ROLLBACK_GATE.md): 롤백/거버넌스 안전장치
 - [docs/13_GOOGLE_OAUTH_SIGNIN.md](docs/13_GOOGLE_OAUTH_SIGNIN.md): Google OAuth 로그인 설정
 - [docs/14_SUPABASE_PROJECT_STATUS.md](docs/14_SUPABASE_PROJECT_STATUS.md): 원격 Supabase 스키마, 권한, 마이그레이션 점검 결과
+- [docs/15_WEBHOOK_AND_RPC_SAFETY.md](docs/15_WEBHOOK_AND_RPC_SAFETY.md): GitHub webhook 서명·중복 전달·오류 처리 및 RPC timeout 한계
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
 

@@ -6,65 +6,88 @@ interface TransactionPayload {
   phonicsSound: string;
 }
 
+type TransactionResult =
+  | { success: true; status: 'TRANSACTION_COMMITTED' }
+  | { success: false; status: 'TIMEOUT_INDETERMINATE' | 'TRANSACTION_FAILED' };
+
+interface RpcError {
+  message: string;
+}
+
+interface RpcResponse {
+  data: unknown;
+  error: RpcError | null;
+}
+
+interface RpcRequest {
+  abortSignal(signal: AbortSignal): PromiseLike<RpcResponse>;
+}
+
+interface SupabaseRpcClient {
+  rpc(name: string, args: Record<string, string>): RpcRequest;
+}
+
 /**
  * RollbackHandler
- * 8초 데드라인 타이머를 가동하여 마크다운 파싱 및 DB 유효성 검증 실패 시 상태를 완전 복구합니다.
+ * 8초 데드라인으로 RPC를 중단 요청하고, 서버 측 커밋 여부가 불확실한 타임아웃을 명시합니다.
  */
 export class RollbackHandler {
-  private supabaseClient: any;
-  private deadlineMs = 8000; // 8초 하드코딩 데드라인 임계치 가드레일
+  private supabaseClient: SupabaseRpcClient;
+  private deadlineMs: number;
 
-  constructor(supabaseClient: any) {
+  constructor(supabaseClient: SupabaseRpcClient, deadlineMs = 8000) {
     this.supabaseClient = supabaseClient;
+    this.deadlineMs = deadlineMs;
   }
 
   /**
-   * executeWith8SecRollback Guard
-   * 8초 데드라인 내에 완료되지 않으면 프로미스를 강제 거부(Reject)하고 롤백 컨텍스트를 반환합니다.
+   * executeWith8SecDeadline Guard
+   * Timeout aborts the client request, but does not prove that the database transaction rolled back.
    */
-  public async executeWith8SecRollback(payload: TransactionPayload): Promise<{ success: boolean; status: string }> {
-    
-    // 1. 8초 타이머 거부(Reject) 프로미스 생성
-    const rollbackTimerPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => {
+  public async executeWith8SecRollback(payload: TransactionPayload): Promise<TransactionResult> {
+    const controller = new AbortController();
+    let deadlineExceeded = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        deadlineExceeded = true;
+        controller.abort();
         reject(new Error('TRANSACTION_TIMEOUT_8SEC_LIMIT_REACHED'));
       }, this.deadlineMs);
     });
 
-    // 2. 실제 Supabase PostgreSQL RPC 안전 트랜잭션 가동 프로미스
-    const dbTransactionPromise = async () => {
-      const { data, error } = await this.supabaseClient.rpc('execute_safe_prescription_transaction', {
-        p_user_id: payload.userId,
-        p_original_target: payload.originalTarget,
-        p_five_year_old: payload.fiveYearOldVersion,
-        p_cheat_key: payload.cheatKeyAction,
-        p_phonics_sound: payload.phonicsSound
-      });
-
-      if (error) {
-        throw new Error(`DB_RPC_FAILED: ${error.message}`);
-      }
-      return data;
-    };
-
     try {
-      // 3. 8초 타이머와 실제 처리 프로미스의 실시간 레이스 경쟁 유도
-      await Promise.race([dbTransactionPromise(), rollbackTimerPromise]);
-      
-      console.log(`🔵 [ROLLBACK GUARD] 유저 [${payload.userId}] 트랜잭션 8초 이내에 정상 처리 완료.`);
-      return { success: true, status: 'TRANSACTION_COMMITTED' };
+      const request = this.supabaseClient
+        .rpc('execute_safe_prescription_transaction', {
+          p_user_id: payload.userId,
+          p_original_target: payload.originalTarget,
+          p_five_year_old: payload.fiveYearOldVersion,
+          p_cheat_key: payload.cheatKeyAction,
+          p_phonics_sound: payload.phonicsSound,
+        })
+        .abortSignal(controller.signal);
 
-    } catch (error: any) {
-      console.error(`🚨 [CRITICAL ROLLBACK TRIGGERED] 사유: ${error.message}`);
-      
-      // 8초 타임아웃 또는 데이터 파괴 예외 발생 시 상위 아키텍처에 롤백 상태 전파
-      // PostgreSQL RPC 특성상 에러가 터지거나 중단되면 자산은 자동으로 원상 복구(Rollback) 상태 유지
-      return { 
-        success: false, 
-        status: error.message === 'TRANSACTION_TIMEOUT_8SEC_LIMIT_REACHED' 
-          ? 'TIMEOUT_ROLLED_BACK' 
-          : 'EXCEPTION_ROLLED_BACK' 
-      };
+      const { error } = await Promise.race([request, timeoutPromise]);
+      if (error) {
+        console.error(`DB_RPC_FAILED: ${error.message}`);
+        return { success: false, status: 'TRANSACTION_FAILED' };
+      }
+
+      console.log(`🔵 [RPC] 유저 [${payload.userId}] 트랜잭션 데드라인 내 정상 처리 완료.`);
+      return { success: true, status: 'TRANSACTION_COMMITTED' };
+    } catch (error) {
+      if (deadlineExceeded) {
+        console.error('RPC deadline exceeded; database commit status is indeterminate');
+        return { success: false, status: 'TIMEOUT_INDETERMINATE' };
+      }
+
+      console.error('DB_RPC_FAILED:', error);
+      return { success: false, status: 'TRANSACTION_FAILED' };
+    } finally {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
     }
   }
 }

@@ -35,6 +35,6 @@ jobs:
       # 원격 클라우드 에지 환경으로 파싱 및 KPI 판정 코드 완전 무인 배포 단행
       - name: Deploy Edge Functions Gateway
         if: steps.credentials.outputs.ready == 'true'
-        run: supabase functions deploy repo-webhook-receiver --project-ref ${{ vars.SUPABASE_PROJECT_ID }}
+        run: supabase functions deploy repo-webhook-receiver --project-ref ${{ vars.SUPABASE_PROJECT_ID }} --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
