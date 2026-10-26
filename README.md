@@ -6,8 +6,9 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 
 ## ✅ 현재 상태
 - 핵심 파서 및 KPI 엔진 검증 완료
-- 자동 테스트: 5개 테스트 suite, 18개 테스트 통과 (파서, 발화 분리, KPI, 게스트 분석, RPC timeout 회귀)
+- 자동 테스트: 7개 테스트 suite, 22개 테스트 통과 (파서, 발화 분리, KPI, 게스트 분석, 데모 프로필/테스트 계정, RPC timeout 회귀)
 - 로그인 없이 체험하는 데모 UI: 목표·행동 기록 분석, 4단 규칙 기반 데모 처방
+- 허용된 Google 테스트 계정에 가입 후 3일 이용권 자동 지급, 결제 없는 구독 시작·취소 모의, 로그아웃·계정 탈퇴 시험
 - 별도 배포: [서비스 시연 소개](https://what-im-supposed-to-did-it-presenta.vercel.app/) · [MVP 직접 체험](https://what-im-supposed-to-did-it.vercel.app/)
 - Supabase 원격 DB 점검 및 `ai_prescriptions` 권한 보완 완료
 - GitHub webhook 서명 검증 및 비공개 전달 메타데이터 저장 구현
@@ -33,6 +34,7 @@ MVP에서 출발하여 CI/CD 자동화, 서킷 브레이커 장애 격리, 피�
 - [docs/16_DEMO_WEB_UI.md](docs/16_DEMO_WEB_UI.md): 데모 웹 UI 사용 방법, 로컬 분석 및 개인정보 처리 방식
 - [presentation/](presentation/): MVP와 분리된 발표용 소개 페이지 (별도 Vercel 프로젝트)
 - [docs/17_MVP_IMPLEMENTATION_SPEC.md](docs/17_MVP_IMPLEMENTATION_SPEC.md): MVP 사용자 흐름, 코드/데이터 계약, 작업 분해 및 완료 기준
+- [docs/18_DEMO_TEST_ACCOUNT_RESET.md](docs/18_DEMO_TEST_ACCOUNT_RESET.md): 고정 Google 테스트 계정의 시연 데이터 초기화 및 권한 범위
 - [docs/mvp_refs.md](docs/mvp_refs.md): 장기 제품 비전과 과거 요구사항 원문 (구현 상태의 근거가 아닌 참고 자료)
 
 🏗️ 1. 프로젝트 폴더 구조 (Project Architecture)
@@ -114,6 +116,8 @@ bash
 cp .env.template .env
 # 생성된 .env 파일 내부의 API_KEY 및 URL 변수값에 실전 인프라 토큰을 입력하세요.
 Use code with caution.
+
+테스트 계정 기능을 사용하려면 Supabase 마이그레이션을 적용하고 Vercel에 `DEMO_TEST_ACCOUNT_EMAIL` (Google 테스트 계정 이메일), `SUPABASE_SERVICE_ROLE_KEY` (서버 전용), `SUPABASE_URL`, `NEXT_PUBLIC_SITE_URL`을 설정합니다. `SUPABASE_SERVICE_ROLE_KEY`는 Secret으로 보관합니다. 구독 화면은 지금은 모의 동작이며 실제 결제나 청구가 없습니다. Toss 연동은 보류 중입니다. 이메일과 서비스 키를 채팅이나 클라이언트 코드에 넣지 마세요.
 
 1단계: 의존성 설치 및 무결성 빌드
 

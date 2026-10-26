@@ -22,7 +22,7 @@ MVP는 아래의 게스트 사용자 여정을 먼저 완성한다.
 원문을 보존한 규칙 기반 다음 행동 제안
 ```
 
-이 문서는 PRD에 있는 장기 기능 전체를 현재 구현으로 간주하지 않는다. 인증, 저장, AI 제공자, 구독, 커뮤니티, 오프라인 동기화는 이 범위에 포함하지 않는다.
+이 문서는 PRD에 있는 장기 기능 전체를 현재 구현으로 간주하지 않는다. 게스트 분석은 계속 비저장으로 유지한다. Google 로그인, 허용된 테스트 계정의 자동 3일 이용권, 결제 없는 모의 구독 시작·취소, 로그아웃 및 계정 탈퇴가 구현 범위다. Toss 실제/샌드박스 결제는 보류한다. 커뮤니티와 오프라인 동기화는 구현되지 않았다.
 
 ## 2. 저장소와 현재 구현
 
@@ -35,11 +35,22 @@ MVP는 아래의 게스트 사용자 여정을 먼저 완성한다.
 | 데모 분석 | `analyzeDemoSession(goal, log, targetNickname)` | 원본 대화록과 명시적 대상 닉네임을 기존 splitter에 전달 |
 | 처방 | `DemoPrescription` | `originalTarget`, `fiveYearOldVersion`, `cheatKeyAction`, `phonicsSound`의 로컬 템플릿 |
 | UI | 단일 게스트 화면 | 목표/기록/닉네임 입력, 샘플 불러오기, 파싱/발화 추출 미리보기, 처방 및 match 근거 표시 |
-| 영속성 | 없음 | 입력은 React 메모리 상태에만 있고 새로고침하면 사라짐 |
+| 인증 | Supabase Google OAuth UI | 게스트 체험은 유지. 로그인 사용자 이메일 표시 및 로그아웃, 서버 허용목록의 검증된 Google 계정만 4개 로컬 샘플 프로필 및 계정 탈퇴 사용 가능 |
+| 테스트 프로필 | 로컬 예시 입력 fixture | `easy_peasy`, `new_year_hero`, `sara_active`, `rina_melancholy`; 프로필 자체는 서버에 저장하지 않음 |
+| 분석 영속성 | 없음 | 입력은 React 메모리 상태에만 있고 새로고침하면 사라짐 |
 | AI | 제품용 연결 없음 | 데모 처방은 규칙 기반이며 외부 모델 호출을 하지 않음 |
 | 데이터베이스 | Supabase 원격 DB | 현재 앱 게스트 분석은 DB를 사용하지 않음. 운영 테이블과 권한은 [문서 14](14_SUPABASE_PROJECT_STATUS.md) 참고 |
+| 구독 | Supabase 기반 테스트 수명주기 | 허용된 테스트 계정에 최초 로그인 시 3일 이용권. 모의 결제는 0원이며 30일 상태 전환/즉시 취소를 기록. 실제 결제와 자동 갱신 없음 |
 
 코드와 PRD가 다를 때는 먼저 위 구현을 사실 기준으로 취급한다. 제안된 기능을 구현 완료로 문서화하지 않는다.
+
+### 2.1 테스트 계정·구독 경계
+
+- 로그인 후 `POST /api/test-account/bootstrap`은 Supabase 토큰을 서버에서 검증하고, `DEMO_TEST_ACCOUNT_EMAIL`과 일치하며 Google에서 인증된 이메일인 경우에만 3일 이용권을 멱등적으로 발급합니다. 일반 계정은 테스트 기능을 사용할 수 없습니다.
+- `POST /api/test-account/subscription`은 실제 결제 없이 30일 모의 구독 이벤트를 기록합니다. 취소 endpoint는 즉시 `cancelled`로 전환합니다. 모든 모의 결제 기록은 0원이며 외부 결제사 호출은 없습니다.
+- 테스트 계정 탈퇴 endpoint는 같은 서버 검증을 거친 뒤 사용자 자신의 테스트 기록과 `ai_prescriptions`를 삭제하고 Supabase Auth 사용자를 삭제합니다. 재가입은 새 사용자 UUID로 처리되어 허용목록 이메일이면 3일 이용권을 새로 받습니다.
+- `database/migrations/`의 시연 계정 관련 SQL은 타임스탬프 순서로 적용합니다. 마지막 `20261027021500_demo_account_lifecycle_simulation.sql`은 테스트 이용권/모의 결제 이벤트, service-role 전용 상태 전환 RPC와 제한된 시연 데이터 초기화를 추가하며 이전 시연 구독 테이블을 참조합니다.
+- Vercel에는 `DEMO_TEST_ACCOUNT_EMAIL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`을 설정합니다. 허용 이메일 및 service-role 키는 서버 환경변수로만 관리하고, 클라이언트 번들/채팅에 넣지 않습니다.
 
 ## 3. 사용자 경험 명세
 

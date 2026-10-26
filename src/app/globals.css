@@ -19,8 +19,8 @@ body {
   font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-button, textarea { font: inherit; }
-button:focus-visible, a:focus-visible, textarea:focus-visible {
+button, textarea, select { font: inherit; }
+button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visible {
   outline: 3px solid #97b47f;
   outline-offset: 3px;
 }
@@ -55,7 +55,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
   font-family: var(--serif);
   transform: rotate(-4deg);
 }
-.topbar-right { display: flex; align-items: center; gap: 30px; }
+.topbar-right { display: flex; align-items: center; gap: 18px; }
 .demo-badge, .privacy-note {
   display: inline-flex;
   align-items: center;
@@ -69,6 +69,36 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
 .demo-badge span { width: 7px; height: 7px; border-radius: 50%; background: #84a36e; }
 .top-link { color: #66736a; font-size: 13px; text-decoration: none; }
 .top-link:hover { color: var(--green-dark); }
+.account-controls { display: flex; align-items: center; gap: 8px; }
+.account-button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  background: var(--green);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.account-button.secondary { border-color: #dfe7d9; background: white; color: var(--green-dark); }
+.account-button.account-danger { border-color: #bb5145; background: #bb5145; }
+.account-button:disabled { cursor: wait; opacity: .65; }
+.account-status, .account-email { max-width: 180px; overflow: hidden; color: #68766a; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.persona-select-label { display: flex; align-items: center; gap: 6px; color: #68766a; font-size: 10px; white-space: nowrap; }
+.persona-select-label select {
+  max-width: 150px;
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid #dfe7d9;
+  border-radius: 8px;
+  background: white;
+  color: var(--green-dark);
+  font: inherit;
+}
+.account-message { color: #68766a; font-size: 10px; }
+.account-error { color: #a64638; }
+.demo-subscription { display: flex; align-items: center; }
 
 .hero {
   min-height: 390px;
@@ -315,6 +345,11 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
   .hero { min-height: 340px; }
   .hero-stamp { width: 155px; height: 155px; margin-right: 0; font-size: 13px; }
   .stamp-caption { font-size: 8px; }
+  .topbar-right { gap: 10px; }
+  .top-link { display: none; }
+  .account-controls { gap: 6px; }
+  .persona-select-label > span { display: none; }
+  .persona-select-label select { max-width: 130px; }
   .workbench, .results { padding: 27px 24px 23px; }
   .result-grid { grid-template-columns: 1fr; }
   .evidence-panel { min-height: 260px; }
@@ -323,9 +358,16 @@ button:focus-visible, a:focus-visible, textarea:focus-visible {
   .app-shell { padding: 0 18px; }
   .topbar { height: 68px; }
   .brand { font-size: 15px; }
-  .topbar-right { gap: 0; }
-  .top-link { display: none; }
+  .topbar-right { gap: 6px; }
   .demo-badge { padding: 7px 9px; font-size: 9px; }
+  .demo-badge { display: none; }
+  .account-controls { gap: 5px; }
+  .demo-subscription { max-width: 150px; }
+  .demo-subscription .account-message { font-size: 9px; }
+  .account-button { min-height: 31px; padding: 0 8px; font-size: 9px; }
+  .account-email { display: none; }
+  .persona-select-label select { max-width: 106px; min-height: 31px; padding: 0 5px; font-size: 9px; }
+  .account-message { position: absolute; top: 61px; right: 18px; z-index: 2; max-width: calc(100vw - 36px); padding: 6px 8px; border-radius: 6px; background: white; box-shadow: 0 2px 10px #26342f22; }
   .hero { min-height: auto; padding: 50px 0 40px; }
   .hero h1 { font-size: 39px; }
   .hero-description { max-width: 430px; font-size: 12px; }

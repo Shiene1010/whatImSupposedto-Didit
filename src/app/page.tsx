@@ -2,20 +2,14 @@
 
 import { useState } from 'react';
 import { analyzeDemoSession, DemoAnalysis } from '../demo/demoSession';
-
-const SAMPLE_GOAL = '매일 영어 회화 한 문장 완벽하게 외우고 원어민처럼 뱉기';
-const SAMPLE_NICKNAME = 'EasyPeasy';
-const SAMPLE_LOG = [
-  '**Sara**: 오늘 오전 스트레칭을 완료했어요.',
-  '**EasyPeasy**: 오늘 영단어랑 회화 한 문장을 간신히 외웠어요. 완벽하진 않았지만 시도했어요.',
-  '[EasyPeasy]: 소리 내서 크게 세 번 읽었습니다. 톡-투-미-나우!',
-  'Rina: 다음에는 저도 해볼게요.',
-].join('\n');
+import AccountControls from './AccountControls';
+import { DEMO_PERSONA_PROFILES, DemoPersonaId } from '../demo/demoProfiles';
 
 export default function HomePage() {
   const [goal, setGoal] = useState('');
   const [log, setLog] = useState('');
   const [targetNickname, setTargetNickname] = useState('');
+  const [selectedPersona, setSelectedPersona] = useState<DemoPersonaId>('easy_peasy');
   const [analysis, setAnalysis] = useState<DemoAnalysis | null>(null);
   const [error, setError] = useState('');
 
@@ -33,8 +27,20 @@ export default function HomePage() {
     }
   }
 
+  function loadProfile(personaId: DemoPersonaId) {
+    const profile = DEMO_PERSONA_PROFILES[personaId];
+    setSelectedPersona(personaId);
+    setGoal(profile.goal);
+    setLog(profile.log);
+    setTargetNickname(profile.targetNickname);
+    setAnalysis(null);
+    setError('');
+  }
+
   function loadSample() {
-    runAnalysis(SAMPLE_GOAL, SAMPLE_LOG, SAMPLE_NICKNAME);
+    const profile = DEMO_PERSONA_PROFILES.easy_peasy;
+    setSelectedPersona('easy_peasy');
+    runAnalysis(profile.goal, profile.log, profile.targetNickname);
   }
 
   return (
@@ -47,6 +53,7 @@ export default function HomePage() {
         <div className="topbar-right">
           <span className="demo-badge"><span /> DEMO SESSION</span>
           <a className="top-link" href="#how-it-works">어떻게 작동하나요?</a>
+          <AccountControls selectedPersona={selectedPersona} onPersonaChange={loadProfile} />
         </div>
       </header>
 
