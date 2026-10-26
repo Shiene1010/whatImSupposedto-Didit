@@ -295,6 +295,10 @@ git diff --check
 
 **산출물 경로:** 코드에 따라 `src/app/`, `tests/`, `README.md`, `docs/16_DEMO_WEB_UI.md`.
 
+**현재 확인된 내용:** 2026-10-27 기준 전체 Jest 5개 suite / 18개 테스트, Next.js production build, 로컬 production HTTP smoke test가 통과했습니다. MVP 입력 UI 변경은 `d18aec7`로 `main`에 푸시됐고, GitHub CI·Supabase CD 및 Vercel 배포 상태가 성공이며 공개 URL이 HTTP 200으로 응답하는 것을 확인했습니다.
+
+**아직 필요한 수동 확인:** 실제 브라우저의 모바일 viewport, 키보드/스크린리더 동작 및 Network 패널 확인은 이 실행 환경에서 수행하지 않았습니다. 이를 완료하기 전에는 Sprint 5를 완료 처리하지 않습니다.
+
 ### 스프린트 전체 Definition of Done
 
 - 해당 스프린트의 수용 기준을 브라우저에서 확인할 수 있다.
