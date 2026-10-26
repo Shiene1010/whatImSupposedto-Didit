@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { User } from '@supabase/supabase-js';
 import DemoSubscriptionControls from '../DemoSubscriptionControls';
+import { DEMO_PERSONA_PROFILES, DemoPersonaId, isDemoPersonaId } from '../../demo/demoProfiles';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -14,6 +15,7 @@ export default function AccountSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [testAccount, setTestAccount] = useState(false);
   const [testAccountError, setTestAccountError] = useState('');
+  const [selectedPersona, setSelectedPersona] = useState<DemoPersonaId>('easy_peasy');
   const [pendingAction, setPendingAction] = useState<'signin' | 'signout' | 'delete' | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -223,6 +225,43 @@ export default function AccountSettingsPage() {
 
             {testAccount && (
               <>
+                <section className="account-settings-card">
+                  <div className="settings-card-heading">
+                    <div>
+                      <span className="section-kicker">DEMO PROFILES</span>
+                      <h2>체험 프로필 선택</h2>
+                    </div>
+                    <span className="account-state-pill test-account">4개 프로필</span>
+                  </div>
+                  <p className="settings-help">
+                    프로필을 골라 해당 인물의 목표와 기록 예시로 체험할 수 있어요. 선택한 프로필은 서버에 저장되지 않습니다.
+                  </p>
+                  <label className="settings-profile-field">
+                    <span>프로필</span>
+                    <select
+                      value={selectedPersona}
+                      onChange={(event) => {
+                        if (isDemoPersonaId(event.target.value)) {
+                          setSelectedPersona(event.target.value);
+                        }
+                      }}
+                    >
+                      {Object.entries(DEMO_PERSONA_PROFILES).map(([id, profile]) => (
+                        <option key={id} value={id}>{profile.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="settings-profile-preview">
+                    <span>목표 예시</span>
+                    <p>{DEMO_PERSONA_PROFILES[selectedPersona].goal}</p>
+                    <span>분석 대상</span>
+                    <p>{DEMO_PERSONA_PROFILES[selectedPersona].targetNickname}</p>
+                  </div>
+                  <Link className="account-button" href={`/?persona=${selectedPersona}`}>
+                    이 프로필로 체험 시작
+                  </Link>
+                </section>
+
                 <section className="account-settings-card">
                   <div className="settings-card-heading">
                     <div>

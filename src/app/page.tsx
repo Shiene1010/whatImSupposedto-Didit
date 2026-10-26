@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { analyzeDemoSession, DemoAnalysis } from '../demo/demoSession';
 import AccountControls from './AccountControls';
-import { DEMO_PERSONA_PROFILES, DemoPersonaId } from '../demo/demoProfiles';
+import { DEMO_PERSONA_PROFILES, DemoPersonaId, isDemoPersonaId } from '../demo/demoProfiles';
 
 export default function HomePage() {
   const [goal, setGoal] = useState('');
@@ -36,6 +36,17 @@ export default function HomePage() {
     setAnalysis(null);
     setError('');
   }
+
+  useEffect(() => {
+    const personaId = new URLSearchParams(window.location.search).get('persona');
+    if (personaId && isDemoPersonaId(personaId)) {
+      const profile = DEMO_PERSONA_PROFILES[personaId];
+      setSelectedPersona(personaId);
+      setGoal(profile.goal);
+      setLog(profile.log);
+      setTargetNickname(profile.targetNickname);
+    }
+  }, []);
 
   function loadSample() {
     const profile = DEMO_PERSONA_PROFILES.easy_peasy;
